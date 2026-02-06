@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>業務エラー</title>
+</head>
+<body>
+  <h1>業務エラー</h1>
+  <p th:text="${message}">業務エラーが発生しました。</p>
+  <p th:if="${errorCode}" th:text="'エラーコード: ' + ${errorCode}">エラーコード</p>
+  <a th:href="@{/}">一覧に戻る</a>
+</body>
+</html>

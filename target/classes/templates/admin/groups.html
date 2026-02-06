@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>グループ管理</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --accent: #2563eb;
+      --accent-weak: rgba(37, 99, 235, 0.08);
+      --danger: #b00020;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", "Noto Sans JP", system-ui, -apple-system, sans-serif;
+    }
+    .page { max-width: 920px; margin: 0 auto; }
+    .header {
+      position: relative;
+      padding: 20px 24px;
+      background: linear-gradient(135deg, #ffffff, #f1f5ff);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(31, 41, 55, 0.06);
+    }
+    h1 { margin: 0; font-size: 24px; letter-spacing: 0.02em; }
+    .sub { margin-top: 4px; color: var(--muted); font-size: 13px; }
+    .auth {
+      position: absolute;
+      top: 18px;
+      right: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .auth strong { color: var(--text); }
+    .auth button {
+      border: 1px solid var(--border);
+      background: #fff;
+      padding: 4px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+    .card {
+      margin-top: 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 10px 24px rgba(31, 41, 55, 0.06);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 12px 10px;
+      text-align: left;
+      font-size: 14px;
+      vertical-align: middle;
+    }
+    th {
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 11px;
+    }
+    tr:last-child td { border-bottom: none; }
+    .action-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 12px;
+      line-height: 1.4;
+      cursor: pointer;
+    }
+    .message { color: var(--accent); margin-bottom: 10px; }
+    .error { color: var(--danger); margin-bottom: 10px; }
+    .footer { margin-top: 14px; }
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    input[type="text"] {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 8px;
+      width: 100%;
+    }
+    input[type="color"] {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0;
+      width: 40px;
+      height: 28px;
+      background: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="header">
+      <h1>グループ管理</h1>
+      <div class="sub">Group Management</div>
+
+      <div class="auth" sec:authorize="isAuthenticated()">
+        <span>ログイン中: <strong sec:authentication="name">user</strong></span>
+        <form th:action="@{/logout}" method="post">
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+          <button type="submit">ログアウト</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="card">
+      <div th:if="${message}" class="message" th:text="${message}"></div>
+      <div th:if="${error}" class="error" th:text="${error}"></div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>グループ名</th>
+            <th>カラー</th>
+            <th>更新</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="g : ${groups}">
+            <td th:text="${g.id}">1</td>
+            <td>
+              <form th:action="@{/admin/groups/update}" method="post" style="display:flex; gap:8px; align-items:center;">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <input type="hidden" name="groupId" th:value="${g.id}" />
+                <input type="text" name="name" th:value="${g.name}" />
+            </td>
+            <td>
+                <input type="color" name="color" th:value="${g.color}" />
+            </td>
+            <td>
+                <button type="submit" class="action-button">更新</button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footer">
+      <a th:href="@{/admin}">管理ページへ戻る</a>
+    </div>
+  </div>
+</body>
+</html>

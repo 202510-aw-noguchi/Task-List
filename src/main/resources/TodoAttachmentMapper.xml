@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.todo.mapper.TodoAttachmentMapper">
+  <resultMap id="AttachmentMap" type="com.example.todo.entity.TodoAttachment">
+    <id column="id" property="id" />
+    <result column="todo_id" property="todoId" />
+    <result column="original_filename" property="originalFilename" />
+    <result column="stored_filename" property="storedFilename" />
+    <result column="content_type" property="contentType" />
+    <result column="size" property="size" />
+    <result column="created_at" property="createdAt" />
+  </resultMap>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO todo_attachments
+      (todo_id, original_filename, stored_filename, content_type, size, created_at)
+    VALUES
+      (#{todoId}, #{originalFilename}, #{storedFilename}, #{contentType}, #{size}, #{createdAt})
+  </insert>
+
+  <select id="findById" resultMap="AttachmentMap">
+    SELECT
+      id,
+      todo_id,
+      original_filename,
+      stored_filename,
+      content_type,
+      size,
+      created_at
+    FROM todo_attachments
+    WHERE id = #{id}
+  </select>
+
+  <select id="findByTodoId" resultMap="AttachmentMap">
+    SELECT
+      id,
+      todo_id,
+      original_filename,
+      stored_filename,
+      content_type,
+      size,
+      created_at
+    FROM todo_attachments
+    WHERE todo_id = #{todoId}
+    ORDER BY created_at DESC
+  </select>
+
+  <select id="findByTodoIds" resultMap="AttachmentMap">
+    SELECT
+      id,
+      todo_id,
+      original_filename,
+      stored_filename,
+      content_type,
+      size,
+      created_at
+    FROM todo_attachments
+    WHERE todo_id IN
+    <foreach collection="ids" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+    ORDER BY created_at DESC
+  </select>
+
+  <delete id="deleteById">
+    DELETE FROM todo_attachments
+    WHERE id = #{id}
+  </delete>
+</mapper>

@@ -1,0 +1,486 @@
+﻿<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title th:text="#{app.title}">ToDo一覧</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --accent: #2563eb;
+      --accent-weak: rgba(37, 99, 235, 0.08);
+      --danger: #b00020;
+      --danger-weak: #ffe3e3;
+      --warn: #8a6d00;
+      --warn-weak: #fff4cc;
+      --ok: #1b5e20;
+      --ok-weak: #e1f5e1;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 24px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", "Noto Sans JP", system-ui, -apple-system, sans-serif;
+    }
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .header {
+      position: relative;
+      padding: 20px 24px;
+      background: linear-gradient(135deg, #ffffff, #f1f5ff);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(31, 41, 55, 0.06);
+    }
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: 0.02em;
+    }
+    .sub {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .auth {
+      position: absolute;
+      top: 18px;
+      right: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .auth strong { color: var(--text); }
+    .auth button {
+      border: 1px solid var(--border);
+      background: #fff;
+      padding: 4px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+    .lang {
+      position: absolute;
+      bottom: 16px;
+      right: 24px;
+      display: flex;
+      gap: 8px;
+      font-size: 12px;
+    }
+    .lang a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .admin-link {
+      margin-top: 12px;
+    }
+    .admin-link a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-weak);
+      color: var(--accent);
+      padding: 6px 10px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 12px;
+    }
+    .card {
+      margin-top: 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 10px 24px rgba(31, 41, 55, 0.06);
+    }
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .filters input, .filters select {
+      border: 1px solid var(--border);
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: #fff;
+    }
+    .action-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 12px;
+      line-height: 1.4;
+      cursor: pointer;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+    }
+    .table th, .table td {
+      border-bottom: 1px solid var(--border);
+      padding: 10px 8px;
+      text-align: left;
+      font-size: 13px;
+      vertical-align: top;
+    }
+    .table th {
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 11px;
+    }
+    .priority-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+    .priority-high { background: var(--danger-weak); color: var(--danger); }
+    .priority-medium { background: var(--warn-weak); color: var(--warn); }
+    .priority-low { background: var(--ok-weak); color: var(--ok); }
+    .deadline-over { background: #ffe5e5; }
+    .deadline-soon { background: #fff4cc; }
+    .pagination {
+      margin-top: 12px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .pagination a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal.is-open { display: flex; }
+    .modal-backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.4); }
+    .modal-dialog {
+      position: relative;
+      background: #fff;
+      padding: 16px 20px;
+      border-radius: 12px;
+      min-width: 280px;
+      max-width: 90vw;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    .modal-title { margin: 0 0 8px; font-size: 18px; }
+    .modal-actions { margin-top: 12px; display: flex; gap: 8px; justify-content: flex-end; }
+
+    @media (max-width: 750px) {
+      .card { overflow-x: auto; }
+      .table { min-width: 900px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="header">
+      <h1 th:text="#{app.title}">ToDo一覧</h1>
+      <div class="sub">Task Overview</div>
+
+      <div class="auth" sec:authorize="isAuthenticated()">
+        <span>ログイン中: <strong sec:authentication="name">user</strong></span>
+        <form th:action="@{/logout}" method="post">
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+          <button type="submit" th:text="#{action.logout}">ログアウト</button>
+        </form>
+      </div>
+
+      <div class="lang">
+        <a th:href="@{/(lang='ja')}">JA</a>
+        <a th:href="@{/(lang='en')}">EN</a>
+      </div>
+    </div>
+
+    <div class="admin-link" sec:authorize="hasRole('ADMIN')">
+      <a th:href="@{/admin}" th:text="#{action.adminPage}">管理画面</a>
+      <a th:href="@{/gantt}" th:text="#{action.resourceLeveling}">リソースレベリング</a>
+    </div>
+
+    <div class="card">
+      <form th:action="@{/}" method="get" class="filters">
+        <input type="text" name="keyword" th:value="${keyword}" th:placeholder="#{label.keywordPlaceholder}" />
+        <select name="categoryId">
+          <option value="" th:text="#{label.categoryPlaceholder}">カテゴリ</option>
+          <option th:each="c : ${categories}"
+                  th:value="${c.id}"
+                  th:selected="${c.id} == ${categoryId}"
+                  th:text="${c.name}">カテゴリ</option>
+        </select>
+        <input type="hidden" name="sort" th:value="${sort}" />
+        <input type="hidden" name="dir" th:value="${dir}" />
+        <button type="submit" class="action-button" th:text="#{action.search}">検索</button>
+        <a th:if="${keyword} or ${categoryId}" th:href="@{/}" class="action-button" th:text="#{action.clear}">クリア</a>
+      </form>
+
+      <div>
+        <p th:text="'全' + ${totalCount} + '件中 ' + ${rangeStart} + '-' + ${rangeEnd} + '件'">
+          全0件中 0-0件
+        </p>
+      </div>
+
+      <div th:if="${#lists.isEmpty(todos)}">
+        <p th:text="#{label.none}">データはありません</p>
+      </div>
+
+      <form th:action="@{/delete}" method="post" id="bulk-delete-form">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <button type="submit" class="action-button" id="bulk-delete-button" sec:authorize="hasRole('ADMIN')"
+                th:text="#{action.deleteSelected}">
+          選択した項目を削除
+        </button>
+        <table class="table" th:if="${!#lists.isEmpty(todos)}">
+    <thead>
+      <tr>
+        <th sec:authorize="hasRole('ADMIN')"><input type="checkbox" id="select-all" /></th>
+        <th>No</th>
+        <th>
+          <a th:href="@{/(keyword=${keyword}, categoryId=${categoryId}, sort='title', dir=${sort == 'title' and dir == 'asc' ? 'desc' : 'asc'}, page=1)}">
+            <span th:text="#{label.title}">タイトル</span>
+          </a>
+          <span th:if="${sort == 'title'}" th:text="${dir == 'asc' ? '▲' : '▼'}">▼</span>
+        </th>
+        <th th:text="#{label.assignee}">担当者</th>
+        <th>
+          <a th:href="@{/(keyword=${keyword}, categoryId=${categoryId}, sort='status', dir=${sort == 'status' and dir == 'asc' ? 'desc' : 'asc'}, page=1)}">
+            <span th:text="#{label.status}">状態</span>
+          </a>
+          <span th:if="${sort == 'status'}" th:text="${dir == 'asc' ? '▲' : '▼'}">▼</span>
+        </th>
+        <th>
+          <a th:href="@{/(keyword=${keyword}, categoryId=${categoryId}, sort='priority', dir=${sort == 'priority' and dir == 'asc' ? 'desc' : 'asc'}, page=1)}">
+            <span th:text="#{label.priority}">優先度</span>
+          </a>
+          <span th:if="${sort == 'priority'}" th:text="${dir == 'asc' ? '▲' : '▼'}">▼</span>
+        </th>
+        <th>
+          <a th:href="@{/(keyword=${keyword}, categoryId=${categoryId}, sort='deadline', dir=${sort == 'deadline' and dir == 'asc' ? 'desc' : 'asc'}, page=1)}">
+            <span th:text="#{label.deadline}">期限</span>
+          </a>
+          <span th:if="${sort == 'deadline'}" th:text="${dir == 'asc' ? '▲' : '▼'}">▼</span>
+        </th>
+        <th th:text="#{label.category}">カテゴリ</th>
+        <th th:text="#{label.attachment}">添付</th>
+        <th>切替</th>
+        <th th:text="#{action.edit}">編集</th>
+        <th th:text="#{action.delete}">削除</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="todo, stat : ${todos}"
+          th:classappend="${todo.deadline != null and todo.deadline.isBefore(T(java.time.LocalDate).now())} ? 'deadline-over' :
+                           (${todo.deadline != null and !todo.deadline.isBefore(T(java.time.LocalDate).now()) and todo.deadline.isBefore(T(java.time.LocalDate).now().plusDays(3))} ? 'deadline-soon' : '')">
+        <td sec:authorize="hasRole('ADMIN')">
+          <input type="checkbox" name="ids" th:value="${todo.id}" class="row-check" />
+        </td>
+        <td th:text="${totalCount - (rangeStart - 1) - stat.index}">1</td>
+        <td th:text="${todo.title}">title</td>
+        <td th:text="${todo.assignee}">assignee</td>
+        <td>
+          <span th:if="${todo.completed}" th:text="#{status.completed}">完了</span>
+          <span th:unless="${todo.completed}" th:text="#{status.incomplete}">未完了</span>
+        </td>
+        <td>
+          <span th:text="${#messages.msg('priority.' + todo.priority.name())}"
+                th:classappend="${todo.priority.name() == 'HIGH'} ? 'priority-badge priority-high' :
+                                (${todo.priority.name() == 'LOW'} ? 'priority-badge priority-low' :
+                                'priority-badge priority-medium')">中</span>
+        </td>
+        <td th:text="${todo.deadline != null ? #temporals.format(todo.deadline, 'yyyy-MM-dd') : ''}">2026-02-02</td>
+        <td>
+          <span th:if="${todo.categoryName}"
+                th:text="${todo.categoryName}"
+                th:style="'background:' + ${todo.categoryColor} + '; color:#fff; padding:2px 8px; border-radius:10px; font-size:12px;'">カテゴリ</span>
+          <span th:unless="${todo.categoryName}" th:text="#{label.notSet}">未設定</span>
+        </td>
+        <td>
+          <span th:if="${attachmentsMap != null and attachmentsMap[todo.id] != null}">
+            <a th:each="a : ${attachmentsMap[todo.id]}"
+               th:href="@{/attachments/{id}/download(id=${a.id})}"
+               th:text="${a.originalFilename}"
+               style="margin-right:6px;">file</a>
+          </span>
+          <span th:if="${attachmentsMap == null or attachmentsMap[todo.id] == null}" th:text="#{label.none}">-</span>
+        </td>
+        <td>
+          <button type="submit"
+                  class="action-button"
+                  th:formaction="@{/{id}/toggle(id=${todo.id})}"
+                  th:text="${todo.completed} ? #{action.toggleIncomplete} : #{action.toggleComplete}">切替</button>
+        </td>
+        <td>
+          <a th:href="@{/revision/{id}(id=${todo.id})}" class="action-button link-button"
+             th:text="#{action.edit}">編集</a>
+        </td>
+        <td>
+          <button type="button"
+                  class="action-button delete-button"
+                  th:data-action="@{/delete/{id}(id=${todo.id})}">
+            <span th:text="#{action.delete}">削除</span>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </form>
+
+      <div style="margin-top:12px;">
+        <a th:href="@{/create}" class="action-button" th:text="#{action.new}">新規登録</a>
+      </div>
+
+      <div class="pagination">
+    <a th:if="${page > 1}"
+       th:href="@{/(keyword=${keyword}, categoryId=${categoryId}, sort=${sort}, dir=${dir}, page=${page - 1})}">
+      前へ
+    </a>
+    <span th:if="${page <= 1}">前へ</span>
+
+    <span th:each="p : ${#numbers.sequence(1, totalPages)}">
+      <a th:if="${p != page}"
+         th:href="@{/(keyword=${keyword}, categoryId=${categoryId}, sort=${sort}, dir=${dir}, page=${p})}"
+         th:text="${p}">1</a>
+      <strong th:if="${p == page}" th:text="${p}">1</strong>
+    </span>
+
+    <a th:if="${page < totalPages}"
+       th:href="@{/(keyword=${keyword}, categoryId=${categoryId}, sort=${sort}, dir=${dir}, page=${page + 1})}">
+      次へ
+    </a>
+    <span th:if="${page >= totalPages}">次へ</span>
+      </div>
+    </div>
+
+    <div id="delete-modal" class="modal" aria-hidden="true"
+         th:attr="data-title=#{modal.deleteTitle},data-message=#{modal.deleteMessage}">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+      <h2 id="delete-modal-title" class="modal-title" th:text="#{modal.deleteTitle}">削除確認</h2>
+      <p th:text="#{modal.deleteMessage}">本当に削除しますか？</p>
+      <div class="modal-actions">
+        <button type="button" id="delete-ok" th:text="#{action.ok}">OK</button>
+        <button type="button" id="delete-cancel" th:text="#{action.cancel}">キャンセル</button>
+      </div>
+    </div>
+    </div>
+
+    <script>
+    (function () {
+      var modal = document.getElementById('delete-modal');
+      var ok = document.getElementById('delete-ok');
+      var cancel = document.getElementById('delete-cancel');
+      var targetAction = null;
+      var skipBulkCheck = false;
+
+      function openModal(action) {
+        targetAction = action;
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+        var modalTitle = modal.getAttribute('data-title');
+        var modalMessage = modal.getAttribute('data-message');
+        if (modalTitle) {
+          document.getElementById('delete-modal-title').textContent = modalTitle;
+        }
+        if (modalMessage) {
+          var p = modal.querySelector('p');
+          if (p) p.textContent = modalMessage;
+        }
+      }
+
+      function closeModal() {
+        modal.classList.remove('is-open');
+        modal.setAttribute('aria-hidden', 'true');
+        targetAction = null;
+      }
+
+      document.querySelectorAll('.delete-button').forEach(function (button) {
+        button.addEventListener('click', function () {
+          openModal(button.getAttribute('data-action'));
+        });
+      });
+
+      ok.addEventListener('click', function () {
+        if (targetAction) {
+          bulkForm.setAttribute('action', targetAction);
+          skipBulkCheck = true;
+          bulkForm.submit();
+        }
+        closeModal();
+      });
+
+      cancel.addEventListener('click', function () {
+        closeModal();
+      });
+
+      modal.querySelector('.modal-backdrop').addEventListener('click', function () {
+        closeModal();
+      });
+
+      var selectAll = document.getElementById('select-all');
+      var rowChecks = document.querySelectorAll('.row-check');
+      var bulkForm = document.getElementById('bulk-delete-form');
+      var bulkButton = document.getElementById('bulk-delete-button');
+
+      if (selectAll) {
+        selectAll.addEventListener('change', function () {
+          rowChecks.forEach(function (cb) { cb.checked = selectAll.checked; });
+        });
+      }
+
+      if (bulkForm) {
+        bulkForm.addEventListener('submit', function (e) {
+          if (skipBulkCheck) {
+            skipBulkCheck = false;
+            return;
+          }
+          var submitter = e.submitter;
+          if (submitter && submitter.id !== 'bulk-delete-button') {
+            return;
+          }
+          var anyChecked = false;
+          rowChecks.forEach(function (cb) { if (cb.checked) { anyChecked = true; } });
+          if (!anyChecked) {
+            e.preventDefault();
+            return;
+          }
+          var confirmText = modal.getAttribute('data-message') || '選択した項目を削除しますか？';
+          if (!confirm(confirmText)) {
+            e.preventDefault();
+          }
+        });
+      }
+    })();
+    </script>
+
+  </div>
+</body>
+</html>

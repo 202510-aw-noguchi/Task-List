@@ -1,0 +1,424 @@
+package com.example.todo.controller;
+
+import com.example.todo.entity.Priority;
+import com.example.todo.entity.Todo;
+import com.example.todo.entity.TodoAttachment;
+import com.example.todo.form.TodoForm;
+import com.example.todo.repository.CategoryRepository;
+import com.example.todo.service.TodoAttachmentService;
+import com.example.todo.service.TodoService;
+import com.example.todo.service.AsyncTaskService;
+import java.io.IOException;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.web.multipart.MultipartFile;
+import java.nio.charset.StandardCharsets;
+import java.time.format.DateTimeFormatter;
+
+@Controller
+public class TodoController {
+    private final TodoService todoService;
+    private final CategoryRepository categoryRepository;
+    private final TodoAttachmentService todoAttachmentService;
+    private final AsyncTaskService asyncTaskService;
+
+    public TodoController(TodoService todoService, CategoryRepository categoryRepository,
+                          TodoAttachmentService todoAttachmentService, AsyncTaskService asyncTaskService) {
+        this.todoService = todoService;
+        this.categoryRepository = categoryRepository;
+        this.todoAttachmentService = todoAttachmentService;
+        this.asyncTaskService = asyncTaskService;
+    }
+
+    @GetMapping("/")
+    public String index(@org.springframework.web.bind.annotation.RequestParam(name = "keyword", required = false)
+                        String keyword,
+                        @org.springframework.web.bind.annotation.RequestParam(name = "categoryId", required = false)
+                        Long categoryId,
+                        @org.springframework.web.bind.annotation.RequestParam(name = "sort", required = false)
+                        String sort,
+                        @org.springframework.web.bind.annotation.RequestParam(name = "dir", required = false)
+                        String dir,
+                        @org.springframework.web.bind.annotation.RequestParam(name = "page", required = false)
+                        Integer page,
+                        Model model,
+                        @AuthenticationPrincipal UserDetails userDetails,
+                        Authentication authentication) {
+        Long userId = requireUserId(userDetails);
+        Long scopeUserId = isAdmin(authentication) ? null : userId;
+        return renderIndex(keyword, categoryId, sort, dir, page, model, scopeUserId);
+    }
+
+    @GetMapping("/admin/todos")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String adminTodos(@org.springframework.web.bind.annotation.RequestParam(name = "keyword", required = false)
+                             String keyword,
+                             @org.springframework.web.bind.annotation.RequestParam(name = "categoryId", required = false)
+                             Long categoryId,
+                             @org.springframework.web.bind.annotation.RequestParam(name = "sort", required = false)
+                             String sort,
+                             @org.springframework.web.bind.annotation.RequestParam(name = "dir", required = false)
+                             String dir,
+                             @org.springframework.web.bind.annotation.RequestParam(name = "page", required = false)
+                             Integer page,
+                             Model model) {
+        return renderIndex(keyword, categoryId, sort, dir, page, model, null);
+    }
+
+    @GetMapping("/create")
+    public String edit(Model model) {
+        TodoForm form = new TodoForm();
+        form.setPriority(Priority.MEDIUM);
+        model.addAttribute("todoForm", form);
+        model.addAttribute("categories", categoryRepository.findAll());
+        return "edit";
+    }
+
+    @GetMapping("/revision/{id}")
+    @PreAuthorize("hasRole('ADMIN') or @todoService.isOwner(#p0, authentication.name)")
+    public String editById(@PathVariable("id") Long id, Model model,
+                           @AuthenticationPrincipal UserDetails userDetails,
+                           Authentication authentication) {
+        Long userId = requireUserId(userDetails);
+        Long scopeUserId = isAdmin(authentication) ? null : userId;
+        Todo todo = todoService.findById(id, scopeUserId);
+        if (todo == null) {
+            throw new com.example.todo.exception.TodoNotFoundException(id);
+        }
+        TodoForm form = new TodoForm();
+        form.setId(todo.getId());
+        form.setAuthor(todo.getAuthor());
+        form.setAssignee(todo.getAssignee());
+        form.setTitle(todo.getTitle());
+        form.setDetail(todo.getDetail());
+        form.setPriority(todo.getPriority());
+        form.setStartDate(todo.getStartDate());
+        form.setDeadline(todo.getDeadline());
+        if (todo.getCategory() != null) {
+            form.setCategoryId(todo.getCategory().getId());
+            form.setCategoryName(todo.getCategory().getName());
+        }
+        model.addAttribute("todoForm", form);
+        model.addAttribute("categories", categoryRepository.findAll());
+        return "edit";
+    }
+
+    @PostMapping("/confirm")
+    @PreAuthorize("hasRole('ADMIN') or (#p0 != null and (#p0.id == null or @todoService.isOwner(#p0.id, authentication.name)))")
+    public String confirm(@Valid @ModelAttribute("todoForm") TodoForm form,
+                          BindingResult bindingResult,
+                          Model model,
+                          @AuthenticationPrincipal UserDetails userDetails,
+                          Authentication authentication) {
+        Long userId = requireUserId(userDetails);
+        Long scopeUserId = isAdmin(authentication) ? null : userId;
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("categories", categoryRepository.findAll());
+            return "edit";
+        }
+        if (form.getId() != null) {
+            Todo existing = todoService.findById(form.getId(), scopeUserId);
+            if (existing == null) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            }
+            java.util.List<TodoAttachment> attachments = todoAttachmentService.findByTodoId(form.getId());
+            model.addAttribute("attachments", attachments);
+        }
+        Long categoryId = form.getCategoryId();
+        if (categoryId != null) {
+            categoryRepository.findById(categoryId).ifPresent(
+                    category -> form.setCategoryName(category.getName()));
+        } else {
+            form.setCategoryName("未選択");
+        }
+        return "confirm";
+    }
+
+    @PostMapping("/complete")
+    @PreAuthorize("hasRole('ADMIN') or (#p0 != null and (#p0.id == null or @todoService.isOwner(#p0.id, authentication.name)))")
+    public String complete(@Valid @ModelAttribute("todoForm") TodoForm form,
+                           BindingResult bindingResult,
+                           Model model,
+                           RedirectAttributes redirectAttributes,
+                           @RequestParam(name = "attachment", required = false) MultipartFile attachment,
+                           @AuthenticationPrincipal UserDetails userDetails,
+                           Authentication authentication) {
+        Long userId = requireUserId(userDetails);
+        Long scopeUserId = isAdmin(authentication) ? null : userId;
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("categories", categoryRepository.findAll());
+            return "edit";
+        }
+        Long categoryId = form.getCategoryId();
+        if (categoryId != null) {
+            categoryRepository.findById(categoryId).ifPresent(
+                    category -> form.setCategoryName(category.getName()));
+        } else {
+            form.setCategoryName("未選択");
+        }
+        if (form.getId() == null) {
+            Todo created = todoService.save(form, userId);
+            form.setId(created.getId());
+        } else {
+            Todo updated = todoService.update(form, scopeUserId);
+            if (updated == null) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            }
+        }
+        if (attachment != null && !attachment.isEmpty() && form.getId() != null) {
+            try {
+                todoAttachmentService.attach(form.getId(), attachment);
+            } catch (IOException ex) {
+                throw new RuntimeException("Failed to store attachment.", ex);
+            }
+        }
+        redirectAttributes.addFlashAttribute("todoForm", form);
+        return "redirect:/complete";
+    }
+
+    @GetMapping("/complete")
+    public String completeView(Model model) {
+        if (!model.containsAttribute("todoForm")) {
+            TodoForm form = new TodoForm();
+            form.setPriority(Priority.MEDIUM);
+            model.addAttribute("todoForm", form);
+        }
+        TodoForm form = (TodoForm) model.getAttribute("todoForm");
+        if (form != null && form.getId() != null) {
+            java.util.List<TodoAttachment> attachments = todoAttachmentService.findByTodoId(form.getId());
+            model.addAttribute("attachments", attachments);
+        }
+        return "complete";
+    }
+
+    @GetMapping("/attachments/{id}/download")
+    public ResponseEntity<Resource> downloadAttachment(@PathVariable("id") Long id) {
+        TodoAttachment attachment = todoAttachmentService.findById(id);
+        if (attachment == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        try {
+            Resource resource = todoAttachmentService.loadAsResource(attachment);
+            ContentDisposition disposition = ContentDisposition.attachment()
+                    .filename(attachment.getOriginalFilename(), StandardCharsets.UTF_8)
+                    .build();
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, disposition.toString())
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(resource);
+        } catch (IOException ex) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/attachments/{id}/delete")
+    public String deleteAttachment(@PathVariable("id") Long id,
+                                   @RequestParam("todoId") Long todoId,
+                                   RedirectAttributes redirectAttributes) {
+        try {
+            todoAttachmentService.delete(id);
+        } catch (IOException ex) {
+            throw new RuntimeException("Failed to delete attachment.", ex);
+        }
+        Todo todo = todoService.findById(todoId, null);
+        if (todo != null) {
+            TodoForm form = new TodoForm();
+            form.setId(todo.getId());
+            form.setAuthor(todo.getAuthor());
+            form.setAssignee(todo.getAssignee());
+            form.setTitle(todo.getTitle());
+            form.setDetail(todo.getDetail());
+            form.setPriority(todo.getPriority());
+            if (todo.getCategory() != null) {
+                form.setCategoryId(todo.getCategory().getId());
+                form.setCategoryName(todo.getCategory().getName());
+            }
+            form.setStartDate(todo.getStartDate());
+            form.setDeadline(todo.getDeadline());
+            redirectAttributes.addFlashAttribute("todoForm", form);
+        }
+        return "redirect:/complete";
+    }
+
+    @PostMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ADMIN') or @todoService.isOwner(#p0, authentication.name)")
+    public String delete(@PathVariable("id") Long id,
+                         @AuthenticationPrincipal UserDetails userDetails,
+                         Authentication authentication) {
+        Long userId = requireUserId(userDetails);
+        Long scopeUserId = isAdmin(authentication) ? null : userId;
+        Todo existing = todoService.findById(id, scopeUserId);
+        if (existing == null) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+        todoService.delete(id, scopeUserId);
+        return "redirect:/";
+    }
+
+    @PostMapping("/{id}/toggle")
+    @PreAuthorize("hasRole('ADMIN') or @todoService.isOwner(#p0, authentication.name)")
+    public String toggle(@PathVariable("id") Long id,
+                         @AuthenticationPrincipal UserDetails userDetails,
+                         Authentication authentication) {
+        Long userId = requireUserId(userDetails);
+        Long scopeUserId = isAdmin(authentication) ? null : userId;
+        boolean updated = todoService.toggleCompleted(id, scopeUserId);
+        if (!updated) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+        return "redirect:/";
+    }
+
+    @PostMapping("/delete")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String deleteSelected(@RequestParam(name = "ids", required = false) java.util.List<Long> ids,
+                                 @AuthenticationPrincipal UserDetails userDetails) {
+        Long userId = requireUserId(userDetails);
+        if (ids != null && !ids.isEmpty()) {
+            todoService.deleteByIds(ids, null);
+        }
+        return "redirect:/";
+    }
+
+    @GetMapping("/export/csv")
+    public ResponseEntity<byte[]> exportCsv(@RequestParam(name = "keyword", required = false) String keyword,
+                                            @RequestParam(name = "categoryId", required = false) Long categoryId,
+                                            @RequestParam(name = "sort", required = false) String sort,
+                                            @RequestParam(name = "dir", required = false) String dir,
+                                            @AuthenticationPrincipal UserDetails userDetails,
+                                            Authentication authentication) {
+        Long userId = requireUserId(userDetails);
+        Long scopeUserId = isAdmin(authentication) ? null : userId;
+        String normalizedSort = (sort == null || sort.isBlank()) ? "createdAt" : sort;
+        String normalizedDir = (dir == null || dir.isBlank()) ? "desc" : dir;
+        java.util.List<Todo> todos =
+                todoService.findAllForCsv(keyword, categoryId, scopeUserId, normalizedSort, normalizedDir);
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("ID,タイトル,登録者,ステータス,作成日").append("\r\n");
+        for (Todo todo : todos) {
+            sb.append(csv(todo.getId()))
+              .append(',').append(csv(todo.getTitle()))
+              .append(',').append(csv(todo.getAuthor()))
+              .append(',').append(csv(todo.isCompleted() ? "完了" : "未完了"))
+              .append(',').append(csv(todo.getCreatedAt() != null ? dtf.format(todo.getCreatedAt()) : ""))
+              .append("\r\n");
+        }
+
+        byte[] bom = new byte[] {(byte) 0xEF, (byte) 0xBB, (byte) 0xBF};
+        byte[] body = sb.toString().getBytes(StandardCharsets.UTF_8);
+        byte[] out = new byte[bom.length + body.length];
+        System.arraycopy(bom, 0, out, 0, bom.length);
+        System.arraycopy(body, 0, out, bom.length, body.length);
+
+        String filename = "todo_" + java.time.LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE) + ".csv";
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("text/csv;charset=UTF-8"))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .body(out);
+    }
+
+    private static String csv(Object value) {
+        String s = value == null ? "" : value.toString();
+        boolean needQuote = s.contains(",") || s.contains("\"") || s.contains("\n") || s.contains("\r");
+        if (needQuote) {
+            s = s.replace("\"", "\"\"");
+            return "\"" + s + "\"";
+        }
+        return s;
+    }
+
+    private Long requireUserId(UserDetails userDetails) {
+        if (userDetails == null) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+        String username = userDetails.getUsername();
+        com.example.todo.entity.AppUser user = todoService.findUserByUsername(username);
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+        return user.getId();
+    }
+
+    private String renderIndex(String keyword, Long categoryId, String sort, String dir, Integer page, Model model,
+                               Long userId) {
+        String normalizedSort = (sort == null || sort.isBlank()) ? "createdAt" : sort;
+        String normalizedDir = (dir == null || dir.isBlank()) ? "desc" : dir;
+        int size = 10;
+        int currentPage = (page == null || page < 1) ? 1 : page;
+        long totalCount = todoService.countAll(keyword, categoryId, userId);
+        int totalPages = (int) Math.max(1, (totalCount + size - 1) / size);
+        if (currentPage > totalPages) {
+            currentPage = totalPages;
+        }
+        int offset = (currentPage - 1) * size;
+
+        java.util.List<Todo> todos =
+                todoService.findAllSorted(keyword, categoryId, userId, normalizedSort, normalizedDir, size, offset);
+        model.addAttribute("todos", todos);
+        java.util.List<Long> todoIds = todos.stream()
+                .map(Todo::getId)
+                .filter(java.util.Objects::nonNull)
+                .toList();
+        java.util.List<TodoAttachment> attachments = todoAttachmentService.findByTodoIds(todoIds);
+        java.util.Map<Long, java.util.List<TodoAttachment>> attachmentsMap =
+                attachments.stream().collect(java.util.stream.Collectors.groupingBy(TodoAttachment::getTodoId));
+        model.addAttribute("attachmentsMap", attachmentsMap);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("categoryId", categoryId);
+        model.addAttribute("sort", normalizedSort);
+        model.addAttribute("dir", normalizedDir);
+        model.addAttribute("page", currentPage);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("totalCount", totalCount);
+        int start = totalCount == 0 ? 0 : offset + 1;
+        int end = (int) Math.min(totalCount, (long) offset + size);
+        model.addAttribute("rangeStart", start);
+        model.addAttribute("rangeEnd", end);
+        model.addAttribute("categories", categoryRepository.findAll());
+        return "index";
+    }
+
+    private boolean isAdmin(Authentication authentication) {
+        if (authentication == null) {
+            return false;
+        }
+        return authentication.getAuthorities().stream()
+                .anyMatch(authority -> "ROLE_ADMIN".equals(authority.getAuthority()));
+    }
+
+    @GetMapping("/admin/report")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> generateReport(@AuthenticationPrincipal UserDetails userDetails) {
+        Long userId = requireUserId(userDetails);
+        try {
+            java.util.concurrent.CompletableFuture<String> future = asyncTaskService.generateReport(userId);
+            String result = future.get(2, java.util.concurrent.TimeUnit.SECONDS);
+            return ResponseEntity.ok(result);
+        } catch (java.util.concurrent.TimeoutException ex) {
+            return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body("Report generation timed out");
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Report generation failed");
+        }
+    }
+}
