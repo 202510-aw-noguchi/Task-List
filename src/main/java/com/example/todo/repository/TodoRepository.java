@@ -1,6 +1,7 @@
 package com.example.todo.repository;
 
 import com.example.todo.entity.Todo;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,6 +15,9 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
 
     @Query("select t from Todo t where t.title like concat('%', :keyword, '%') order by t.createdAt desc")
     List<Todo> searchByTitle(@Param("keyword") String keyword);
+
+    @Query("select t from Todo t join fetch t.user where t.completed = false and t.deadline = :deadline")
+    List<Todo> findDueForReminder(@Param("deadline") LocalDate deadline);
 
     Optional<Todo> findByIdAndUser_Id(Long id, Long userId);
 

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title th:text="${appName} + ' 期限リマインダー'">Todo Reminder</title>
+  </head>
+  <body style="font-family: Arial, sans-serif; line-height: 1.6;">
+    <h2 th:text="${appName} + ' 期限リマインダー'">Todo Reminder</h2>
+    <p>以下のタスクが本日期限です。</p>
+    <table cellpadding="6" cellspacing="0" border="1" style="border-collapse: collapse;">
+      <tr>
+        <th align="left">タイトル</th>
+        <td th:text="${title}">タイトル</td>
+      </tr>
+      <tr>
+        <th align="left">期限</th>
+        <td th:text="${deadline}">2026/02/09</td>
+      </tr>
+      <tr>
+        <th align="left">優先度</th>
+        <td th:text="${priority}">MEDIUM</td>
+      </tr>
+      <tr>
+        <th align="left">詳細</th>
+        <td th:text="${detail}">詳細</td>
+      </tr>
+    </table>
+    <p>Todoアプリで進捗を確認してください。</p>
+  </body>
+</html>

@@ -3,11 +3,11 @@ INSERT INTO groups (name, color) VALUES
 ('Issues', '#43a047'),
 ('キャンペーン', '#1e88e5');
 
-INSERT INTO users (username, password, role) VALUES
-('admin', '$2a$10$7EqJtq98hPqEX7fNZaFWoOhi5LNE1P3e/9dZYkTfLZAlJ4Kq5P9z.', 'ROLE_ADMIN'),
-('User_A', '$2a$10$7EqJtq98hPqEX7fNZaFWoOhi5LNE1P3e/9dZYkTfLZAlJ4Kq5P9z.', 'ROLE_USER'),
-('User_B', '$2a$10$7EqJtq98hPqEX7fNZaFWoOhi5LNE1P3e/9dZYkTfLZAlJ4Kq5P9z.', 'ROLE_USER'),
-('User_C', '$2a$10$7EqJtq98hPqEX7fNZaFWoOhi5LNE1P3e/9dZYkTfLZAlJ4Kq5P9z.', 'ROLE_USER');
+INSERT INTO users (username, password, role, email) VALUES
+('admin', '$2a$10$7EqJtq98hPqEX7fNZaFWoOhi5LNE1P3e/9dZYkTfLZAlJ4Kq5P9z.', 'ROLE_ADMIN', 'admin@example.com'),
+('User_A', '$2a$10$7EqJtq98hPqEX7fNZaFWoOhi5LNE1P3e/9dZYkTfLZAlJ4Kq5P9z.', 'ROLE_USER', 'user_a@example.com'),
+('User_B', '$2a$10$7EqJtq98hPqEX7fNZaFWoOhi5LNE1P3e/9dZYkTfLZAlJ4Kq5P9z.', 'ROLE_USER', 'user_b@example.com'),
+('User_C', '$2a$10$7EqJtq98hPqEX7fNZaFWoOhi5LNE1P3e/9dZYkTfLZAlJ4Kq5P9z.', 'ROLE_USER', 'user_c@example.com');
 
 INSERT INTO todos (author, assignee, title, detail, created_at, updated_at, completed, priority, start_date, due_date, group_id, user_id) VALUES
 ('Admin', 'Admin', 'Task 01', 'Sample task 01.', '2026-02-02 09:00:00', '2026-02-02 09:00:00', FALSE, 'MEDIUM', '2026-02-01', '2026-02-03', 1, 1),

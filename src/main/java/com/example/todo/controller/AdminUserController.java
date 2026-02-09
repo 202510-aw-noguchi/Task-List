@@ -45,6 +45,7 @@ public class AdminUserController {
     public String create(@RequestParam("username") String username,
                          @RequestParam("password") String password,
                          @RequestParam("role") String role,
+                         @RequestParam(value = "email", required = false) String email,
                          RedirectAttributes redirectAttributes) {
         String trimmedUsername = username == null ? "" : username.trim();
         if (trimmedUsername.isEmpty() || password == null || password.isBlank()) {
@@ -61,6 +62,8 @@ public class AdminUserController {
         user.setUsername(trimmedUsername);
         user.setPassword(passwordEncoder.encode(password));
         user.setRole(normalizeRole(role));
+        String trimmedEmail = email == null ? "" : email.trim();
+        user.setEmail(trimmedEmail.isEmpty() ? null : trimmedEmail);
         userRepository.save(user);
 
         redirectAttributes.addFlashAttribute("message", "ユーザーを作成しました。");
@@ -71,6 +74,7 @@ public class AdminUserController {
     @PreAuthorize("hasRole('ADMIN')")
     public String updateRole(@RequestParam("userId") Long userId,
                              @RequestParam("role") String role,
+                             @RequestParam(value = "email", required = false) String email,
                              RedirectAttributes redirectAttributes) {
         Optional<AppUser> userOpt = userRepository.findById(userId);
         if (userOpt.isEmpty()) {
@@ -80,6 +84,8 @@ public class AdminUserController {
 
         AppUser user = userOpt.get();
         user.setRole(normalizeRole(role));
+        String trimmedEmail = email == null ? "" : email.trim();
+        user.setEmail(trimmedEmail.isEmpty() ? null : trimmedEmail);
         userRepository.save(user);
         redirectAttributes.addFlashAttribute("message", "権限を更新しました。");
         return "redirect:/admin/users/manage";

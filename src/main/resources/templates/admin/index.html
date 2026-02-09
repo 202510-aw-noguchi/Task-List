@@ -149,8 +149,8 @@
       <table>
         <thead>
           <tr>
-            <th>リンク / Link</th>
-            <th>メニュー / Menu</th>
+            <th>リンク</th>
+            <th>メニュー</th>
           </tr>
         </thead>
         <tbody>
@@ -170,7 +170,7 @@
             <td class="menu-cell">
               <a class="menu-link" th:href="@{/admin/users}">
                 <div class="menu-label">
-                  <span>ユーザー一覧/管理</span>
+                  <span>ユーザー一覧 / 管理</span>
                   <span class="en">User List / Manage</span>
                 </div>
               </a>
@@ -194,6 +194,17 @@
                 <div class="menu-label">
                   <span>レポート生成</span>
                   <span class="en">Generate Report</span>
+                </div>
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a th:href="@{/admin/mail-settings}">▶</a></td>
+            <td class="menu-cell">
+              <a class="menu-link" th:href="@{/admin/mail-settings}">
+                <div class="menu-label">
+                  <span>リマインダーメール送信元設定</span>
+                  <span class="en">Reminder Sender Settings</span>
                 </div>
               </a>
             </td>
