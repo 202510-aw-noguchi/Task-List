@@ -98,6 +98,63 @@
       font-weight: 600;
       font-size: 12px;
     }
+    .weather-section {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: flex-start;
+    }
+    .weather-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      box-shadow: 0 6px 16px rgba(31, 41, 55, 0.05);
+      width: 160px;
+    }
+    .weather-title {
+      margin: 0 0 4px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .weather-meta {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .weather-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 88px;
+      height: 88px;
+      border-radius: 999px;
+      color: var(--accent);
+      font-size: 56px;
+      line-height: 1;
+    }
+    .weather-icon.sunny {
+      color: #e53935;
+    }
+    .weather-values {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 12px;
+      font-size: 13px;
+    }
+    .weather-label {
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .weather-note {
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--muted);
+    }
     .card {
       margin-top: 16px;
       background: var(--card);
@@ -248,6 +305,17 @@
     <div class="admin-link" sec:authorize="hasRole('ADMIN')">
       <a th:href="@{/admin}" th:text="#{action.adminPage}">管理画面</a>
       <a th:href="@{/gantt}" th:text="#{action.resourceLeveling}">リソースレベリング</a>
+    </div>
+
+    <div class="weather-section" aria-live="polite">
+      <div class="weather-card" data-city="東京" data-lat="35.6895" data-lon="139.692">
+        <p class="weather-title">今日の東京</p>
+        <div class="weather-meta">読み込み中...</div>
+      </div>
+      <div class="weather-card" data-city="京都" data-lat="35.0211" data-lon="135.754">
+        <p class="weather-title">今日の京都</p>
+        <div class="weather-meta">読み込み中...</div>
+      </div>
     </div>
 
     <div class="card">
@@ -506,6 +574,76 @@
         });
       }
     })();
+    </script>
+
+    <script>
+      (function () {
+        var cards = document.querySelectorAll('.weather-card');
+        var timezone = 'Asia/Tokyo';
+        var dailyParams = 'temperature_2m_max,temperature_2m_min,precipitation_probability_max,weathercode';
+
+        function renderError(card, message) {
+          card.innerHTML = '<p class="weather-title">' + card.dataset.city + '</p>' +
+            '<div class="weather-meta">' + message + '</div>';
+        }
+
+        cards.forEach(function (card) {
+          var lat = card.dataset.lat;
+          var lon = card.dataset.lon;
+          var url = 'https://api.open-meteo.com/v1/forecast' +
+            '?latitude=' + encodeURIComponent(lat) +
+            '&longitude=' + encodeURIComponent(lon) +
+            '&daily=' + encodeURIComponent(dailyParams) +
+            '&timezone=' + encodeURIComponent(timezone) +
+            '&forecast_days=1';
+
+          fetch(url)
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+              if (!data || !data.daily || !data.daily.time || !data.daily.time.length) {
+                renderError(card, '天気情報を取得できませんでした');
+                return;
+              }
+              var max = data.daily.temperature_2m_max[0];
+              var min = data.daily.temperature_2m_min[0];
+              var pop = data.daily.precipitation_probability_max[0];
+              var code = data.daily.weathercode ? data.daily.weathercode[0] : null;
+              var iconData = weatherIcon(code);
+              card.innerHTML =
+                '<p class="weather-title">今日の' + card.dataset.city + '</p>' +
+                '<div class="weather-meta">' +
+                '<span class="weather-icon' + iconData.className + '" aria-hidden="true">' + iconData.icon + '</span>' +
+                '<span>' + iconData.label + '</span>' +
+                '</div>' +
+                '<div class="weather-values">' +
+                '<div><div class="weather-label">最高気温</div><div>' + max + '℃</div></div>' +
+                '<div><div class="weather-label">最低気温</div><div>' + min + '℃</div></div>' +
+                '<div><div class="weather-label">降水確率</div><div>' + pop + '%</div></div>' +
+                '</div>' +
+                '<div class="weather-note">Data: Open-Meteo</div>';
+            })
+            .catch(function () {
+              renderError(card, '天気情報を取得できませんでした');
+            });
+        });
+
+        function weatherIcon(code) {
+          if (code === null || typeof code === 'undefined') {
+            return { icon: '？', label: '不明', className: '' };
+          }
+          if (code === 0) return { icon: '☀', label: '晴れ', className: ' sunny' };
+          if (code === 1) return { icon: '🌤', label: '晴れ時々雲', className: '' };
+          if (code === 2) return { icon: '⛅', label: '曇り時々晴れ', className: '' };
+          if (code === 3) return { icon: '☁', label: '曇り', className: '' };
+          if (code === 45 || code === 48) return { icon: '🌫', label: '霧', className: '' };
+          if (code === 51 || code === 53 || code === 55 || code === 56 || code === 57) return { icon: '🌦', label: '霧雨', className: '' };
+          if (code === 61 || code === 63 || code === 65 || code === 66 || code === 67) return { icon: '🌧', label: '雨', className: '' };
+          if (code === 71 || code === 73 || code === 75 || code === 77 || code === 85 || code === 86) return { icon: '❄', label: '雪', className: '' };
+          if (code === 80 || code === 81 || code === 82) return { icon: '🌧', label: 'にわか雨', className: '' };
+          if (code === 95 || code === 96 || code === 99) return { icon: '⛈', label: '雷雨', className: '' };
+          return { icon: '？', label: '不明', className: '' };
+        }
+      })();
     </script>
 
   </div>
