@@ -114,8 +114,8 @@
     }
     .info-section {
       margin-top: 0;
-      display: flex;
-      flex-wrap: nowrap;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
       align-items: stretch;
     }
@@ -126,19 +126,13 @@
       gap: 12px;
       align-items: stretch;
     }
-    .weather-section {
-      display: flex;
-      flex-wrap: nowrap;
-      gap: 12px;
-      align-items: stretch;
-    }
     .weather-card {
       background: #fff;
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 12px 14px;
       box-shadow: 0 6px 16px rgba(31, 41, 55, 0.05);
-      width: 300px;
+      width: 100%;
       height: var(--api-card-height);
       overflow: hidden;
     }
@@ -210,18 +204,13 @@
       margin-top: auto;
       text-align: right;
     }
-    .fx-section {
-      margin-top: 0;
-      display: flex;
-      align-items: stretch;
-    }
     .fx-card {
       background: #fff;
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 12px 14px;
       box-shadow: 0 6px 16px rgba(31, 41, 55, 0.05);
-      width: 320px;
+      width: 100%;
       height: var(--api-card-height);
       overflow: hidden;
       display: flex;
@@ -372,7 +361,21 @@
     .modal-title { margin: 0 0 8px; font-size: 18px; }
     .modal-actions { margin-top: 12px; display: flex; gap: 8px; justify-content: flex-end; }
 
+    @media (max-width: 1025px) {
+      .info-section {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .weather-card,
+      .fx-card {
+        width: 100%;
+      }
+    }
+
     @media (max-width: 750px) {
+      .info-section {
+        grid-template-columns: 1fr;
+      }
       .card { overflow-x: auto; }
       .table { min-width: 900px; }
     }
@@ -410,22 +413,17 @@
 
     <div class="info-wrap">
       <div class="info-section">
-        <div class="weather-section" aria-live="polite">
-          <div class="weather-card" data-city="東京" data-lat="35.6895" data-lon="139.692">
-            <p class="weather-title">今日の東京</p>
-            <div class="weather-meta">読み込み中...</div>
-          </div>
-          <div class="weather-card" data-city="京都" data-lat="35.0211" data-lon="135.754">
-            <p class="weather-title">今日の京都</p>
-            <div class="weather-meta">読み込み中...</div>
-          </div>
+        <div class="weather-card" data-city="東京" data-lat="35.6895" data-lon="139.692" aria-live="polite">
+          <p class="weather-title">今日の東京</p>
+          <div class="weather-meta">読み込み中...</div>
         </div>
-
-        <div class="fx-section" aria-live="polite">
-          <div class="fx-card" id="fx-card">
-            <p class="fx-title">為替</p>
-            <div class="fx-meta">読み込み中...</div>
-          </div>
+        <div class="weather-card" data-city="京都" data-lat="35.0211" data-lon="135.754" aria-live="polite">
+          <p class="weather-title">今日の京都</p>
+          <div class="weather-meta">読み込み中...</div>
+        </div>
+        <div class="fx-card" id="fx-card" aria-live="polite">
+          <p class="fx-title">為替</p>
+          <div class="fx-meta">読み込み中...</div>
         </div>
       </div>
 
