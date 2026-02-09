@@ -31,6 +31,7 @@
       border-radius: 16px;
       box-shadow: 0 6px 20px rgba(31, 41, 55, 0.06);
     }
+    .header .auth { max-width: 45%; }
     .header-title {
       display: flex;
       align-items: center;
@@ -114,6 +115,27 @@
       border: none;
       padding: 0;
       background: transparent;
+    }
+
+    @media (max-width: 1025px) {
+      .header { padding: 16px 18px; }
+      .header-title { gap: 10px; }
+      .header-logo { width: 40px; height: 40px; }
+      h1 { font-size: 22px; }
+      .header .auth { max-width: 50%; }
+    }
+
+    @media (max-width: 750px) {
+      .header {
+        display: grid;
+        grid-template-columns: 1fr;
+        row-gap: 10px;
+      }
+      .header .auth {
+        position: static;
+        justify-content: flex-start;
+        max-width: 100%;
+      }
     }
   </style>
 </head>
