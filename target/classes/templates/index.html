@@ -19,6 +19,10 @@
       --warn-weak: #fff4cc;
       --ok: #1b5e20;
       --ok-weak: #e1f5e1;
+      --weather-icon-size: 44px;
+      --api-card-height: 110px;
+      --temp-label-size: 11px;
+      --temp-value-size: 13px;
     }
     * {
       box-sizing: border-box;
@@ -98,12 +102,25 @@
       font-weight: 600;
       font-size: 12px;
     }
-    .weather-section {
+    .info-section {
+      margin-top: 0;
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 12px;
+      align-items: stretch;
+    }
+    .info-wrap {
       margin-top: 12px;
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-      justify-content: flex-start;
+      align-items: stretch;
+    }
+    .weather-section {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 12px;
+      align-items: stretch;
     }
     .weather-card {
       background: #fff;
@@ -111,7 +128,9 @@
       border-radius: 14px;
       padding: 12px 14px;
       box-shadow: 0 6px 16px rgba(31, 41, 55, 0.05);
-      width: 160px;
+      width: 300px;
+      height: var(--api-card-height);
+      overflow: hidden;
     }
     .weather-title {
       margin: 0 0 4px;
@@ -130,11 +149,11 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 88px;
-      height: 88px;
+      width: var(--weather-icon-size);
+      height: var(--weather-icon-size);
       border-radius: 999px;
       color: var(--accent);
-      font-size: 56px;
+      font-size: 28px;
       line-height: 1;
     }
     .weather-icon.sunny {
@@ -146,14 +165,81 @@
       gap: 6px 12px;
       font-size: 13px;
     }
+    .weather-values.one-row {
+      grid-template-columns: 44px 1fr 1fr 1fr;
+      align-items: center;
+    }
+    .weather-icon-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .temp-stack {
+      display: grid;
+      grid-template-rows: auto auto;
+      gap: 2px;
+    }
+    .temp-label {
+      font-size: var(--temp-label-size);
+      color: var(--muted);
+    }
+    .temp-value {
+      font-size: var(--temp-value-size);
+      font-weight: 600;
+    }
     .weather-label {
       color: var(--muted);
       font-size: 11px;
     }
     .weather-note {
-      margin-top: 6px;
+      margin-top: 4px;
       font-size: 11px;
       color: var(--muted);
+    }
+    .weather-note.right {
+      margin-top: auto;
+      text-align: right;
+    }
+    .fx-section {
+      margin-top: 0;
+      display: flex;
+      align-items: stretch;
+    }
+    .fx-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      box-shadow: 0 6px 16px rgba(31, 41, 55, 0.05);
+      width: 320px;
+      height: var(--api-card-height);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .fx-title {
+      margin: 0 0 6px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .fx-meta {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+    .fx-values {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px 12px;
+      font-size: 13px;
+      margin-top: auto;
+    }
+    .fx-spacer {
+      height: var(--weather-icon-size);
+    }
+    .fx-label {
+      color: var(--muted);
+      font-size: 11px;
     }
     .card {
       margin-top: 16px;
@@ -307,15 +393,27 @@
       <a th:href="@{/gantt}" th:text="#{action.resourceLeveling}">リソースレベリング</a>
     </div>
 
-    <div class="weather-section" aria-live="polite">
-      <div class="weather-card" data-city="東京" data-lat="35.6895" data-lon="139.692">
-        <p class="weather-title">今日の東京</p>
-        <div class="weather-meta">読み込み中...</div>
+    <div class="info-wrap">
+      <div class="info-section">
+        <div class="weather-section" aria-live="polite">
+          <div class="weather-card" data-city="東京" data-lat="35.6895" data-lon="139.692">
+            <p class="weather-title">今日の東京</p>
+            <div class="weather-meta">読み込み中...</div>
+          </div>
+          <div class="weather-card" data-city="京都" data-lat="35.0211" data-lon="135.754">
+            <p class="weather-title">今日の京都</p>
+            <div class="weather-meta">読み込み中...</div>
+          </div>
+        </div>
+
+        <div class="fx-section" aria-live="polite">
+          <div class="fx-card" id="fx-card">
+            <p class="fx-title">為替</p>
+            <div class="fx-meta">読み込み中...</div>
+          </div>
+        </div>
       </div>
-      <div class="weather-card" data-city="京都" data-lat="35.0211" data-lon="135.754">
-        <p class="weather-title">今日の京都</p>
-        <div class="weather-meta">読み込み中...</div>
-      </div>
+
     </div>
 
     <div class="card">
@@ -611,16 +709,13 @@
               var iconData = weatherIcon(code);
               card.innerHTML =
                 '<p class="weather-title">今日の' + card.dataset.city + '</p>' +
-                '<div class="weather-meta">' +
-                '<span class="weather-icon' + iconData.className + '" aria-hidden="true">' + iconData.icon + '</span>' +
-                '<span>' + iconData.label + '</span>' +
+                '<div class="weather-values one-row">' +
+                '<div class="weather-icon-wrap"><span class="weather-icon' + iconData.className + '" aria-hidden="true">' + iconData.icon + '</span></div>' +
+                '<div class="temp-stack"><div class="temp-label">最高気温</div><div class="temp-value">' + max + '℃</div></div>' +
+                '<div class="temp-stack"><div class="temp-label">最低気温</div><div class="temp-value">' + min + '℃</div></div>' +
+                '<div class="temp-stack"><div class="temp-label">降水確率</div><div class="temp-value">' + pop + '%</div></div>' +
                 '</div>' +
-                '<div class="weather-values">' +
-                '<div><div class="weather-label">最高気温</div><div>' + max + '℃</div></div>' +
-                '<div><div class="weather-label">最低気温</div><div>' + min + '℃</div></div>' +
-                '<div><div class="weather-label">降水確率</div><div>' + pop + '%</div></div>' +
-                '</div>' +
-                '<div class="weather-note">Data: Open-Meteo</div>';
+                '<div class="weather-note right">Data: Open-Meteo</div>';
             })
             .catch(function () {
               renderError(card, '天気情報を取得できませんでした');
@@ -642,6 +737,70 @@
           if (code === 80 || code === 81 || code === 82) return { icon: '🌧', label: 'にわか雨', className: '' };
           if (code === 95 || code === 96 || code === 99) return { icon: '⛈', label: '雷雨', className: '' };
           return { icon: '？', label: '不明', className: '' };
+        }
+      })();
+    </script>
+
+
+    <script>
+      (function () {
+        var card = document.getElementById('fx-card');
+        var url = 'https://api.frankfurter.dev/v1/latest?base=JPY&symbols=USD,EUR';
+
+        function renderError() {
+          card.innerHTML =
+            '<p class="fx-title">為替</p>' +
+            '<div class="fx-meta">為替情報を取得できませんでした</div>';
+        }
+
+        fetch(url)
+          .then(function (res) { return res.json(); })
+          .then(function (data) {
+            if (!data || !data.rates) {
+              renderError();
+              return;
+            }
+                // Frankfurter base=JPY returns USD per JPY.
+                var jpyUsd = data.rates.USD; // JPY -> USD
+                var jpyEur = data.rates.EUR; // JPY -> EUR
+                var usdJpy = jpyUsd ? (1 / jpyUsd) : null;
+                var eurJpy = jpyEur ? (1 / jpyEur) : null;
+            var date = data.date || '';
+            card.innerHTML =
+              '<p class="fx-title">為替</p>' +
+              '<div class="fx-meta">更新日: ' + date + '</div>' +
+              '<div class="fx-spacer" aria-hidden="true"></div>' +
+              '<div class="fx-values">' +
+              '<div><div class="fx-label">USD/JPY</div><div>' + formatRate(usdJpy) + '</div></div>' +
+              '<div><div class="fx-label">JPY/USD</div><div>' + formatRate(jpyUsd, 6) + '</div></div>' +
+              '<div><div class="fx-label">EUR/JPY</div><div>' + formatRate(eurJpy) + '</div></div>' +
+              '<div><div class="fx-label">JPY/EUR</div><div>' + formatRate(jpyEur, 6) + '</div></div>' +
+              '</div>';
+          })
+          .catch(function () {
+            renderError();
+          });
+
+        function shiftDate(dateStr, deltaDays) {
+          var parts = dateStr.split('-');
+          if (parts.length !== 3) return dateStr;
+          var d = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+          d.setUTCDate(d.getUTCDate() + deltaDays);
+          var y = d.getUTCFullYear();
+          var m = String(d.getUTCMonth() + 1).padStart(2, '0');
+          var day = String(d.getUTCDate()).padStart(2, '0');
+          return y + '-' + m + '-' + day;
+        }
+
+        function diffDigits(value) {
+          if (value === null || typeof value === 'undefined') return 3;
+          return Math.abs(value) < 1 ? 6 : 3;
+        }
+
+        function formatRate(value, digits) {
+          if (value === null || typeof value === 'undefined') return '-';
+          var d = typeof digits === 'number' ? digits : diffDigits(value);
+          return value.toFixed(d);
         }
       })();
     </script>
