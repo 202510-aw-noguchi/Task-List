@@ -46,23 +46,23 @@ class TodoServiceTest {
 
     @Test
     void findAllSorted_usesMapper() {
-        when(todoMapper.findAllSorted(null, null, 1L, "createdAt", "desc", 10, 0))
+        when(todoMapper.findAllSorted(null, null, 1L, false, "createdAt", "desc", 10, 0))
                 .thenReturn(List.of(new Todo()));
 
-        List<Todo> result = todoService.findAllSorted(null, null, 1L, "createdAt", "desc", 10, 0);
+        List<Todo> result = todoService.findAllSorted(null, null, 1L, false, "createdAt", "desc", 10, 0);
 
         assertThat(result).hasSize(1);
-        verify(todoMapper).findAllSorted(null, null, 1L, "createdAt", "desc", 10, 0);
+        verify(todoMapper).findAllSorted(null, null, 1L, false, "createdAt", "desc", 10, 0);
     }
 
     @Test
     void countAll_usesMapper() {
-        when(todoMapper.countAll("k", null, 1L)).thenReturn(3L);
+        when(todoMapper.countAll("k", null, 1L, false)).thenReturn(3L);
 
-        long count = todoService.countAll("k", null, 1L);
+        long count = todoService.countAll("k", null, 1L, false);
 
         assertThat(count).isEqualTo(3L);
-        verify(todoMapper).countAll("k", null, 1L);
+        verify(todoMapper).countAll("k", null, 1L, false);
     }
 
     @Test

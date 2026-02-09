@@ -9,6 +9,7 @@ public interface TodoMapper {
     List<Todo> findAllSorted(@Param("keyword") String keyword,
                              @Param("categoryId") Long categoryId,
                              @Param("userId") Long userId,
+                             @Param("includeCompleted") boolean includeCompleted,
                              @Param("sort") String sort,
                              @Param("dir") String dir,
                              @Param("limit") int limit,
@@ -16,7 +17,8 @@ public interface TodoMapper {
 
     long countAll(@Param("keyword") String keyword,
                   @Param("categoryId") Long categoryId,
-                  @Param("userId") Long userId);
+                  @Param("userId") Long userId,
+                  @Param("includeCompleted") boolean includeCompleted);
 
     int deleteByIds(@Param("ids") List<Long> ids,
                     @Param("userId") Long userId);

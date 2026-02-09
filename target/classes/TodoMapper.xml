@@ -32,6 +32,9 @@
       <if test="categoryId != null">
         AND t.group_id = #{categoryId}
       </if>
+      <if test="includeCompleted == false">
+        AND t.completed = FALSE
+      </if>
     </where>
     ORDER BY
     <choose>
@@ -60,6 +63,9 @@
       </if>
       <if test="categoryId != null">
         AND t.group_id = #{categoryId}
+      </if>
+      <if test="includeCompleted == false">
+        AND t.completed = FALSE
       </if>
     </where>
   </select>

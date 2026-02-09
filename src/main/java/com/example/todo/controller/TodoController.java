@@ -58,6 +58,8 @@ public class TodoController {
                         String sort,
                         @org.springframework.web.bind.annotation.RequestParam(name = "dir", required = false)
                         String dir,
+                        @org.springframework.web.bind.annotation.RequestParam(name = "includeCompleted", required = false)
+                        Boolean includeCompleted,
                         @org.springframework.web.bind.annotation.RequestParam(name = "page", required = false)
                         Integer page,
                         Model model,
@@ -65,7 +67,7 @@ public class TodoController {
                         Authentication authentication) {
         Long userId = requireUserId(userDetails);
         Long scopeUserId = isAdmin(authentication) ? null : userId;
-        return renderIndex(keyword, categoryId, sort, dir, page, model, scopeUserId);
+        return renderIndex(keyword, categoryId, sort, dir, includeCompleted, page, model, scopeUserId);
     }
 
     @GetMapping("/admin/todos")
@@ -78,10 +80,12 @@ public class TodoController {
                              String sort,
                              @org.springframework.web.bind.annotation.RequestParam(name = "dir", required = false)
                              String dir,
+                             @org.springframework.web.bind.annotation.RequestParam(name = "includeCompleted", required = false)
+                             Boolean includeCompleted,
                              @org.springframework.web.bind.annotation.RequestParam(name = "page", required = false)
                              Integer page,
                              Model model) {
-        return renderIndex(keyword, categoryId, sort, dir, page, model, null);
+        return renderIndex(keyword, categoryId, sort, dir, includeCompleted, page, model, null);
     }
 
     @GetMapping("/create")
@@ -360,13 +364,15 @@ public class TodoController {
         return user.getId();
     }
 
-    private String renderIndex(String keyword, Long categoryId, String sort, String dir, Integer page, Model model,
+    private String renderIndex(String keyword, Long categoryId, String sort, String dir, Boolean includeCompleted,
+                               Integer page, Model model,
                                Long userId) {
         String normalizedSort = (sort == null || sort.isBlank()) ? "createdAt" : sort;
         String normalizedDir = (dir == null || dir.isBlank()) ? "desc" : dir;
+        boolean showCompleted = includeCompleted != null && includeCompleted;
         int size = 10;
         int currentPage = (page == null || page < 1) ? 1 : page;
-        long totalCount = todoService.countAll(keyword, categoryId, userId);
+        long totalCount = todoService.countAll(keyword, categoryId, userId, showCompleted);
         int totalPages = (int) Math.max(1, (totalCount + size - 1) / size);
         if (currentPage > totalPages) {
             currentPage = totalPages;
@@ -374,7 +380,8 @@ public class TodoController {
         int offset = (currentPage - 1) * size;
 
         java.util.List<Todo> todos =
-                todoService.findAllSorted(keyword, categoryId, userId, normalizedSort, normalizedDir, size, offset);
+                todoService.findAllSorted(keyword, categoryId, userId, showCompleted,
+                        normalizedSort, normalizedDir, size, offset);
         model.addAttribute("todos", todos);
         java.util.List<Long> todoIds = todos.stream()
                 .map(Todo::getId)
@@ -388,6 +395,7 @@ public class TodoController {
         model.addAttribute("categoryId", categoryId);
         model.addAttribute("sort", normalizedSort);
         model.addAttribute("dir", normalizedDir);
+        model.addAttribute("includeCompleted", showCompleted);
         model.addAttribute("page", currentPage);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("totalCount", totalCount);

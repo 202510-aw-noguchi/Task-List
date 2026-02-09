@@ -86,14 +86,14 @@ public class TodoService {
     }
 
     @Transactional(readOnly = true)
-    public List<Todo> findAllSorted(String keyword, Long categoryId, Long userId, String sort, String dir,
-                                    int limit, int offset) {
-        return todoMapper.findAllSorted(keyword, categoryId, userId, sort, dir, limit, offset);
+    public List<Todo> findAllSorted(String keyword, Long categoryId, Long userId, boolean includeCompleted,
+                                    String sort, String dir, int limit, int offset) {
+        return todoMapper.findAllSorted(keyword, categoryId, userId, includeCompleted, sort, dir, limit, offset);
     }
 
     @Transactional(readOnly = true)
-    public long countAll(String keyword, Long categoryId, Long userId) {
-        return todoMapper.countAll(keyword, categoryId, userId);
+    public long countAll(String keyword, Long categoryId, Long userId, boolean includeCompleted) {
+        return todoMapper.countAll(keyword, categoryId, userId, includeCompleted);
     }
 
     @Transactional(readOnly = true)
