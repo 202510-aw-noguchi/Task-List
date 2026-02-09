@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>繧ｰ繝ｫ繝ｼ繝礼ｮ｡逅・/title>
+  <title>グループ管理</title>
   <style>
     :root {
       --bg: #f6f7fb;
@@ -106,6 +106,16 @@
     }
     .message { color: var(--accent); margin-bottom: 10px; }
     .error { color: var(--danger); margin-bottom: 10px; }
+    .group-create {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .group-create input[type="text"] {
+      max-width: 260px;
+    }
     .footer { margin-top: 14px; }
     .footer a {
       color: var(--accent);
@@ -125,6 +135,23 @@
       width: 40px;
       height: 28px;
       background: #fff;
+    }
+    .group-form {
+      display: contents;
+    }
+    th.action-cell,
+    td.action-cell {
+      white-space: nowrap;
+      width: 90px;
+    }
+    th.color-cell,
+    td.color-cell {
+      width: 90px;
+    }
+    .action-button.danger {
+      border-color: #f3b4b4;
+      color: #b00020;
+      background: #fff5f5;
     }
     @media (max-width: 1025px) {
       .header { padding: 16px 18px; }
@@ -158,10 +185,10 @@
         </div>
       </div>
       <div class="auth" sec:authorize="isAuthenticated()">
-        <span>繝ｭ繧ｰ繧､繝ｳ荳ｭ: <strong sec:authentication="name">user</strong></span>
+        <span>ログイン中: <strong sec:authentication="name">user</strong></span>
         <form th:action="@{/logout}" method="post">
           <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-          <button type="submit">繝ｭ繧ｰ繧｢繧ｦ繝・/button>
+          <button type="submit">ログアウト</button>
         </form>
       </div>
     </div>
@@ -170,29 +197,44 @@
       <div th:if="${message}" class="message" th:text="${message}"></div>
       <div th:if="${error}" class="error" th:text="${error}"></div>
 
+      <form th:action="@{/admin/groups/create}" method="post" class="group-create">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <input type="text" name="name" placeholder="グループ名" required />
+        <input type="color" name="color" value="#2563eb" />
+        <button type="submit" class="action-button">追加</button>
+      </form>
+
       <table>
         <thead>
           <tr>
             <th>ID</th>
-            <th>繧ｰ繝ｫ繝ｼ繝怜錐</th>
-            <th>繧ｫ繝ｩ繝ｼ</th>
-            <th>譖ｴ譁ｰ</th>
+            <th>グループ名</th>
+            <th class="color-cell">カラー</th>
+            <th class="action-cell">更新</th>
+            <th class="action-cell">削除</th>
           </tr>
         </thead>
         <tbody>
           <tr th:each="g : ${groups}">
             <td th:text="${g.id}">1</td>
             <td>
-              <form th:action="@{/admin/groups/update}" method="post" style="display:flex; gap:8px; align-items:center;">
+              <form th:action="@{/admin/groups/update}" method="post" class="group-form">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <input type="hidden" name="groupId" th:value="${g.id}" />
                 <input type="text" name="name" th:value="${g.name}" />
             </td>
-            <td>
+            <td class="color-cell">
                 <input type="color" name="color" th:value="${g.color}" />
             </td>
-            <td>
-                <button type="submit" class="action-button">譖ｴ譁ｰ</button>
+            <td class="action-cell">
+                <button type="submit" class="action-button">更新</button>
+              </form>
+            </td>
+            <td class="action-cell">
+              <form th:action="@{/admin/groups/delete}" method="post" onsubmit="return confirm('削除しますか？');">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <input type="hidden" name="groupId" th:value="${g.id}" />
+                <button type="submit" class="action-button danger">削除</button>
               </form>
             </td>
           </tr>
@@ -201,7 +243,7 @@
     </div>
 
     <div class="footer">
-      <a th:href="@{/admin}">邂｡逅・・繝ｼ繧ｸ縺ｸ謌ｻ繧・/a>
+      <a th:href="@{/admin}">管理トップへ戻る</a>
     </div>
   </div>
 </body>

@@ -26,4 +26,6 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
     boolean existsByIdAndUser_Username(Long id, String username);
 
     boolean existsByUser_Id(Long userId);
+
+    boolean existsByCategory_Id(Long categoryId);
 }
