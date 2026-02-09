@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="UTF-8" />
@@ -38,6 +38,16 @@
       border: 1px solid var(--border);
       border-radius: 16px;
       box-shadow: 0 6px 20px rgba(31, 41, 55, 0.06);
+    }
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header-logo {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
     }
     h1 { margin: 0; font-size: 24px; letter-spacing: 0.02em; }
     .sub { margin-top: 4px; color: var(--muted); font-size: 13px; }
@@ -98,6 +108,7 @@
       overflow-x: auto;
       border: 1px solid var(--border);
       border-radius: 12px;
+      position: relative;
     }
     #matrix {
       margin-bottom: 3em;
@@ -122,6 +133,10 @@
       text-transform: uppercase;
       letter-spacing: 0.04em;
       font-size: 11px;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      white-space: nowrap;
     }
     .matrix th.today,
     .matrix td.today {
@@ -130,10 +145,16 @@
     .matrix th.sortable {
       cursor: pointer;
       user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
     }
-    .matrix th.sortable span {
+    .matrix th.sortable .sort-mark {
       margin-left: 6px;
       font-size: 10px;
+      line-height: 1;
+      flex: 0 0 auto;
     }
     .matrix th.sticky,
     .matrix td.sticky {
@@ -142,7 +163,7 @@
       background: #fff;
       text-align: left;
       min-width: 70px;
-      z-index: 2;
+      z-index: 3;
     }
     .matrix th.sticky-2,
     .matrix td.sticky-2 {
@@ -150,7 +171,7 @@
       left: 70px;
       background: #fff;
       min-width: 140px;
-      z-index: 2;
+      z-index: 3;
     }
     .matrix th.sticky-3,
     .matrix td.sticky-3 {
@@ -158,7 +179,7 @@
       left: 210px;
       background: #fff;
       min-width: 70px;
-      z-index: 2;
+      z-index: 3;
     }
     .matrix th.sticky-4,
     .matrix td.sticky-4 {
@@ -166,7 +187,7 @@
       left: 280px;
       background: #fff;
       min-width: 60px;
-      z-index: 2;
+      z-index: 3;
     }
     .matrix th.sticky-5,
     .matrix td.sticky-5 {
@@ -174,7 +195,15 @@
       left: 340px;
       background: #fff;
       min-width: 60px;
-      z-index: 2;
+      z-index: 3;
+    }
+    .matrix th.sticky,
+    .matrix th.sticky-2,
+    .matrix th.sticky-3,
+    .matrix th.sticky-4,
+    .matrix th.sticky-5 {
+      background: #f8fafc;
+      z-index: 4;
     }
     .bar {
       display: block;
@@ -223,8 +252,13 @@
 <body>
   <div class="page">
     <div class="header">
-      <h1 th:text="#{gantt.title}">リソースレベリング</h1>
-      <div class="sub" th:text="#{gantt.subtitle}">Resource Leveling</div>
+      <div class="header-title">
+        <img class="header-logo" src="/images/animal_hashibirokou.png" alt="アイコン" />
+        <div>
+          <h1 th:text="#{gantt.title}">リソースレベリング</h1>
+          <div class="sub" th:text="#{gantt.subtitle}">Resource Leveling</div>
+        </div>
+      </div>
       <div class="auth" sec:authorize="isAuthenticated()">
         <span th:text="#{label.loggedIn} + ': '">ログイン中: </span><strong sec:authentication="name">user</strong>
         <form th:action="@{/logout}" method="post">
@@ -242,7 +276,7 @@
         <button class="action-button" id="toggle-completed" style="margin-left:3em;"
                 th:text="#{action.showCompleted}"
                 th:attr="data-show-completed=#{action.showCompleted},data-show-incomplete=#{action.showIncompleteOnly}">
-          完了レコードも表示する
+          完了も表示
         </button>
       </div>
 
@@ -309,9 +343,9 @@
       return "priority-badge priority-medium";
     };
     const priorityLabel = (priority) => {
-      if (priority === "HIGH") return matrixEl.dataset.priorityHigh || "高";
-      if (priority === "LOW") return matrixEl.dataset.priorityLow || "低";
-      return matrixEl.dataset.priorityMedium || "中";
+      if (priority === "HIGH") return matrixEl.dataset.priorityHigh || "High";
+      if (priority === "LOW") return matrixEl.dataset.priorityLow || "Low";
+      return matrixEl.dataset.priorityMedium || "Medium";
     };
 
     const buildMatrix = (tasks, range) => {
@@ -326,15 +360,25 @@
       const sorted = sortTasks(tasks);
       const sortMark = (key) => currentSort.key === key ? (currentSort.dir === 1 ? "▲" : "▼") : "";
 
+      const labelGroup = matrixEl.dataset.labelGroup || "グループ";
+      const labelTitle = matrixEl.dataset.labelTitle || "タイトル";
+      const labelAssignee = matrixEl.dataset.labelAssignee || "担当者";
+      const labelStatus = matrixEl.dataset.labelStatus || "状態";
+      const labelPriority = matrixEl.dataset.labelPriority || "優先度";
+      const groupMark = sortMark("groupName");
+      const assigneeMark = sortMark("assignee");
+      const groupHeader = groupMark ? `${labelGroup}<span class="sort-mark">${groupMark}</span>` : labelGroup;
+      const assigneeHeader = assigneeMark ? `${labelAssignee}<span class="sort-mark">${assigneeMark}</span>` : labelAssignee;
+
       const header = `
         <table>
           <thead>
             <tr>
-              <th class="sticky sortable" data-sort="groupName">${matrixEl.dataset.labelGroup || "グループ"}<span>${sortMark("groupName")}</span></th>
-              <th class="sticky-2">${matrixEl.dataset.labelTitle || "タイトル"}</th>
-              <th class="sticky-3 sortable" data-sort="assignee">${matrixEl.dataset.labelAssignee || "担当者"}<span>${sortMark("assignee")}</span></th>
-              <th class="sticky-4">${matrixEl.dataset.labelStatus || "状態"}</th>
-              <th class="sticky-5">${matrixEl.dataset.labelPriority || "優先度"}</th>
+              <th class="sticky sortable" data-sort="groupName">${groupHeader}</th>
+              <th class="sticky-2">${labelTitle}</th>
+              <th class="sticky-3 sortable" data-sort="assignee">${assigneeHeader}</th>
+              <th class="sticky-4">${labelStatus}</th>
+              <th class="sticky-5">${labelPriority}</th>
               ${days.map((d) => `<th class="${d === todayStr ? "today" : ""}">${d.slice(5)}</th>`).join("")}
             </tr>
           </thead>
@@ -380,8 +424,8 @@
 
               const groupStyle = t.groupColor ? `style="background:${t.groupColor};"` : "";
               const statusLabel = t.status === "COMPLETED"
-                ? (matrixEl.dataset.statusCompleted || "完了")
-                : (matrixEl.dataset.statusIncomplete || "未完了");
+                ? (matrixEl.dataset.statusCompleted || "Completed")
+                : (matrixEl.dataset.statusIncomplete || "Incomplete");
               return `
                 <tr class="${isDone ? "row-done" : ""}">
                   <td class="sticky"><span class="group-badge" ${groupStyle}>${t.groupName || "-"}</span></td>
@@ -446,7 +490,7 @@
         <table>
           <thead>
             <tr>
-              <th class="sticky">${summaryEl.dataset.userLabel || "ユーザー名"}</th>
+              <th class="sticky">${summaryEl.dataset.userLabel || "User"}</th>
               ${days.map((d) => `<th class="${d === todayStr ? "today" : ""}">${d.slice(5)}</th>`).join("")}
             </tr>
           </thead>
@@ -463,7 +507,7 @@
               </tr>
             `).join("")}
             <tr>
-              <td class="sticky">${summaryEl.dataset.totalLabel || "合計"}</td>
+              <td class="sticky">${summaryEl.dataset.totalLabel || "Total"}</td>
               ${days.map((d) => {
                 let total = 0;
                 Object.keys(map).forEach((name) => {
@@ -506,13 +550,15 @@
     prevBtn.addEventListener("click", () => shiftMonth(-1));
     nextBtn.addEventListener("click", () => shiftMonth(1));
     monthPicker.addEventListener("change", load);
-    toggleCompletedBtn.addEventListener("click", () => {
-      showCompleted = !showCompleted;
-      toggleCompletedBtn.textContent = showCompleted
-        ? (toggleCompletedBtn.dataset.showIncomplete || "未完了のみ表示")
-        : (toggleCompletedBtn.dataset.showCompleted || "完了レコードも表示する");
-      load();
-    });
+    if (toggleCompletedBtn) {
+      toggleCompletedBtn.addEventListener("click", () => {
+        showCompleted = !showCompleted;
+        toggleCompletedBtn.textContent = showCompleted
+          ? (toggleCompletedBtn.dataset.showIncomplete || "Show Incomplete Only")
+          : (toggleCompletedBtn.dataset.showCompleted || "Show Completed");
+        load();
+      });
+    }
     load();
   </script>
 </body>

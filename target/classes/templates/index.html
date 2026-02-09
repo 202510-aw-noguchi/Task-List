@@ -46,6 +46,16 @@
       border-radius: 16px;
       box-shadow: 0 6px 20px rgba(31, 41, 55, 0.06);
     }
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header-logo {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+    }
     h1 {
       margin: 0;
       font-size: 24px;
@@ -371,8 +381,13 @@
 <body>
   <div class="page">
     <div class="header">
-      <h1 th:text="#{app.title}">ToDo一覧</h1>
-      <div class="sub">Task Overview</div>
+      <div class="header-title">
+        <img class="header-logo" src="/images/animal_hashibirokou.png" alt="アイコン" />
+        <div>
+          <h1 th:text="#{app.title}">ToDo一覧</h1>
+          <div class="sub">Task Overview</div>
+        </div>
+      </div>
 
       <div class="auth" sec:authorize="isAuthenticated()">
         <span>ログイン中: <strong sec:authentication="name">user</strong></span>
