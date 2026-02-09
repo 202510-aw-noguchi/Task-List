@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -14,7 +15,11 @@
       --accent: #2563eb;
       --accent-weak: rgba(37, 99, 235, 0.08);
     }
-    * { box-sizing: border-box; }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       padding: 24px;
@@ -22,7 +27,12 @@
       color: var(--text);
       font-family: "Segoe UI", "Noto Sans JP", system-ui, -apple-system, sans-serif;
     }
-    .page { max-width: 920px; margin: 0 auto; }
+
+    .page {
+      max-width: 920px;
+      margin: 0 auto;
+    }
+
     .header {
       position: relative;
       padding: 20px 24px;
@@ -31,8 +41,19 @@
       border-radius: 16px;
       box-shadow: 0 6px 20px rgba(31, 41, 55, 0.06);
     }
-    h1 { margin: 0; font-size: 24px; letter-spacing: 0.02em; }
-    .sub { margin-top: 4px; color: var(--muted); font-size: 13px; }
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: 0.02em;
+    }
+
+    .sub {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
     .auth {
       position: absolute;
       top: 18px;
@@ -43,7 +64,11 @@
       font-size: 13px;
       color: var(--muted);
     }
-    .auth strong { color: var(--text); }
+
+    .auth strong {
+      color: var(--text);
+    }
+
     .auth button {
       border: 1px solid var(--border);
       background: #fff;
@@ -51,6 +76,7 @@
       border-radius: 999px;
       cursor: pointer;
     }
+
     .card {
       margin-top: 16px;
       background: var(--card);
@@ -59,17 +85,21 @@
       padding: 16px;
       box-shadow: 0 10px 24px rgba(31, 41, 55, 0.06);
     }
+
     table {
       width: 100%;
       border-collapse: collapse;
       table-layout: fixed;
     }
-    th, td {
+
+    th,
+    td {
       border-bottom: 1px solid var(--border);
       padding: 10px 4px;
       text-align: left;
       font-size: 14px;
     }
+
     th {
       color: var(--muted);
       font-weight: 600;
@@ -77,24 +107,32 @@
       letter-spacing: 0.06em;
       font-size: 11px;
     }
-    tr:last-child td { border-bottom: none; }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
     .menu-label {
       display: flex;
       flex-direction: column;
       gap: 2px;
     }
+
     .menu-label .en {
       color: var(--muted);
       font-size: 12px;
     }
+
     .menu-link {
       color: inherit;
       text-decoration: none;
       display: block;
     }
+
     .menu-link:hover .menu-label {
       color: var(--accent);
     }
+
     .link-cell a {
       display: inline-flex;
       align-items: center;
@@ -108,21 +146,28 @@
       font-weight: 700;
       transition: transform 0.08s ease, background 0.2s ease;
     }
+
     .link-cell {
       width: 40px;
       text-align: left;
       padding-left: 0;
       padding-right: 0;
     }
+
     .menu-cell {
       padding-left: 0;
       text-align: left;
     }
+
     .link-cell a:hover {
       background: rgba(37, 99, 235, 0.16);
       transform: translateX(2px);
     }
-    .footer { margin-top: 14px; }
+
+    .footer {
+      margin-top: 14px;
+    }
+
     .footer a {
       color: var(--accent);
       text-decoration: none;
@@ -130,6 +175,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="page">
     <div class="header">
@@ -170,8 +216,8 @@
             <td class="menu-cell">
               <a class="menu-link" th:href="@{/admin/users}">
                 <div class="menu-label">
-                  <span>ユーザー一覧 / 管理</span>
-                  <span class="en">User List / Manage</span>
+                  <span>ユーザー管理</span>
+                  <span class="en">User Management</span>
                 </div>
               </a>
             </td>
@@ -240,4 +286,5 @@
     </div>
   </div>
 </body>
+
 </html>
