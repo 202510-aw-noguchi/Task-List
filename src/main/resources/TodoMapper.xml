@@ -129,4 +129,20 @@
     </foreach>
     GROUP BY user_id
   </select>
+
+  <select id="findMonthlyProgressSummary" resultType="com.example.todo.dto.MonthlyProgressSummary">
+    SELECT
+      COUNT(*) AS totalCount,
+      SUM(CASE WHEN completed = TRUE THEN 1 ELSE 0 END) AS completedCount,
+      SUM(CASE WHEN completed = FALSE THEN 1 ELSE 0 END) AS incompleteCount
+    FROM todos
+    <where>
+      <if test="userId != null">
+        user_id = #{userId}
+      </if>
+      AND due_date IS NOT NULL
+      AND due_date &gt;= #{start}
+      AND due_date &lt;= #{end}
+    </where>
+  </select>
 </mapper>

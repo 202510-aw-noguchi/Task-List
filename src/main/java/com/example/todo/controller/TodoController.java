@@ -33,6 +33,10 @@ import org.springframework.http.ContentDisposition;
 import org.springframework.web.multipart.MultipartFile;
 import java.nio.charset.StandardCharsets;
 import java.time.format.DateTimeFormatter;
+import java.time.YearMonth;
+import java.time.LocalDate;
+import java.util.Locale;
+import com.example.todo.dto.MonthlyProgressSummary;
 
 @Controller
 public class TodoController {
@@ -404,6 +408,24 @@ public class TodoController {
         model.addAttribute("rangeStart", start);
         model.addAttribute("rangeEnd", end);
         model.addAttribute("categories", categoryRepository.findAll());
+
+        YearMonth month = YearMonth.now();
+        LocalDate monthStart = month.atDay(1);
+        LocalDate monthEnd = month.atEndOfMonth();
+        MonthlyProgressSummary summary = todoService.findMonthlyProgressSummary(userId, monthStart, monthEnd);
+        if (summary == null) {
+            summary = new MonthlyProgressSummary();
+        }
+        long monthlyTotal = summary.getTotalCount();
+        long monthlyCompleted = summary.getCompletedCount();
+        long monthlyIncomplete = summary.getIncompleteCount();
+        double monthlyRate = monthlyTotal == 0 ? 0.0 : (monthlyCompleted * 100.0) / monthlyTotal;
+        model.addAttribute("monthlyTotalCount", monthlyTotal);
+        model.addAttribute("monthlyCompletedCount", monthlyCompleted);
+        model.addAttribute("monthlyIncompleteCount", monthlyIncomplete);
+        model.addAttribute("monthlyCompletedRate", monthlyRate);
+        model.addAttribute("monthlyCompletedRateText",
+                String.format(Locale.JAPAN, "%.1f", monthlyRate));
         return "index";
     }
 

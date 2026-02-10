@@ -5,6 +5,7 @@ import com.example.todo.entity.Category;
 import com.example.todo.entity.Priority;
 import com.example.todo.entity.TodoHistory;
 import com.example.todo.exception.BusinessException;
+import com.example.todo.dto.MonthlyProgressSummary;
 import com.example.todo.form.TodoForm;
 import com.example.todo.mapper.TodoMapper;
 import com.example.todo.repository.CategoryRepository;
@@ -149,6 +150,12 @@ public class TodoService {
     @Transactional(readOnly = true)
     public List<Todo> findAllForCsv(String keyword, Long categoryId, Long userId, String sort, String dir) {
         return todoMapper.findAllForCsv(keyword, categoryId, userId, sort, dir);
+    }
+
+    @Transactional(readOnly = true)
+    public MonthlyProgressSummary findMonthlyProgressSummary(Long userId, java.time.LocalDate start,
+                                                            java.time.LocalDate end) {
+        return todoMapper.findMonthlyProgressSummary(userId, start, end);
     }
 
     @Transactional(readOnly = true)

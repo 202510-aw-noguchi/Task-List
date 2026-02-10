@@ -98,10 +98,22 @@
       text-decoration: none;
       font-weight: 600;
     }
-    .admin-link {
+    .shortcut-row {
       margin-top: 12px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
     }
-    .admin-link a {
+    .admin-link,
+    .quick-links {
+      margin-top: 12px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .admin-link a,
+    .quick-links a {
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -116,7 +128,7 @@
     .info-section {
       margin-top: 0;
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 12px;
       align-items: stretch;
     }
@@ -240,6 +252,88 @@
     .fx-label {
       color: var(--muted);
       font-size: 11px;
+    }
+    .progress-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      box-shadow: 0 6px 16px rgba(31, 41, 55, 0.05);
+      width: 100%;
+      height: var(--api-card-height);
+      overflow: hidden;
+      display: flex;
+    }
+    .progress-title {
+      margin: 0 0 6px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .progress-content {
+      display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+      gap: 12px;
+      flex: 1;
+      width: 100%;
+    }
+    .progress-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 6px;
+      min-width: 0;
+      flex: 1;
+    }
+    .progress-meta {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+    .progress-stats {
+      display: grid;
+      gap: 4px;
+      font-size: 12px;
+    }
+    .progress-stats strong {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .progress-donut {
+      height: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      background:
+        conic-gradient(#14b8a6 0 var(--progress),
+                       #fdba74 var(--progress) 100%);
+      position: relative;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .progress-donut::after {
+      content: "";
+      position: absolute;
+      inset: 22px;
+      background: #fff;
+      border-radius: 50%;
+    }
+    .progress-donut span {
+      position: relative;
+      z-index: 1;
+    }
+    .progress-rate {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
     }
     .card {
       margin-top: 16px;
@@ -370,10 +464,11 @@
       .header .auth { max-width: 50%; }
       .info-section {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
       .weather-card,
-      .fx-card {
+      .fx-card,
+      .progress-card {
         width: 100%;
       }
     }
@@ -422,9 +517,13 @@
       </div>
     </div>
 
-    <div class="admin-link" sec:authorize="hasRole('ADMIN')">
-      <a th:href="@{/admin}" th:text="#{action.adminPage}">管理画面</a>
-      <a th:href="@{/gantt}" th:text="#{action.resourceLeveling}">リソースレベリング</a>
+    <div class="shortcut-row">
+      <div class="quick-links">
+        <a th:href="@{/gantt}" th:text="#{action.resourceLeveling}">リソースレベリング</a>
+      </div>
+      <div class="admin-link" sec:authorize="hasRole('ADMIN')">
+        <a th:href="@{/admin}" th:text="#{action.adminPage}">管理画面</a>
+      </div>
     </div>
 
     <div class="info-wrap">
@@ -440,6 +539,26 @@
         <div class="fx-card" id="fx-card" aria-live="polite">
           <p class="fx-title">為替</p>
           <div class="fx-meta">読み込み中...</div>
+        </div>
+        <div class="progress-card" aria-live="polite">
+          <div class="progress-content" th:style="'--progress:' + ${monthlyCompletedRate} + '%;'">
+            <div class="progress-left">
+              <p class="progress-title">当月完了度</p>
+              <div class="progress-stats">
+                <div>
+                  <span class="legend-dot" style="background:#14b8a6;"></span>
+                  完了 <strong th:text="${monthlyCompletedCount}">0</strong>
+                </div>
+                <div>
+                  <span class="legend-dot" style="background:#fdba74;"></span>
+                  未完了 <strong th:text="${monthlyIncompleteCount}">0</strong>
+                </div>
+              </div>
+            </div>
+            <div class="progress-donut" role="img" aria-label="当月完了度">
+              <span class="progress-rate" th:text="${monthlyCompletedRateText} + '%'">0.0%</span>
+            </div>
+          </div>
         </div>
       </div>
 

@@ -2,6 +2,8 @@ package com.example.todo.mapper;
 
 import com.example.todo.entity.Todo;
 import com.example.todo.dto.UserTaskSummary;
+import com.example.todo.dto.MonthlyProgressSummary;
+import java.time.LocalDate;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
@@ -30,4 +32,8 @@ public interface TodoMapper {
                              @Param("dir") String dir);
 
     List<UserTaskSummary> findUserTaskSummaries(@Param("userIds") List<Long> userIds);
+
+    MonthlyProgressSummary findMonthlyProgressSummary(@Param("userId") Long userId,
+                                                      @Param("start") LocalDate start,
+                                                      @Param("end") LocalDate end);
 }
