@@ -72,7 +72,7 @@ public class TodoController {
                         Authentication authentication) {
         Long userId = requireUserId(userDetails);
         Long scopeUserId = isAdmin(authentication) ? null : userId;
-        return renderIndex(keyword, categoryId, sort, dir, includeCompleted, page, model, scopeUserId);
+        return renderIndex(keyword, categoryId, sort, dir, includeCompleted, page, model, scopeUserId, "index");
     }
 
     @GetMapping("/admin/todos")
@@ -90,7 +90,7 @@ public class TodoController {
                              @org.springframework.web.bind.annotation.RequestParam(name = "page", required = false)
                              Integer page,
                              Model model) {
-        return renderIndex(keyword, categoryId, sort, dir, includeCompleted, page, model, null);
+        return renderIndex(keyword, categoryId, sort, dir, includeCompleted, page, model, null, "admin/todos");
     }
 
     @GetMapping("/create")
@@ -275,6 +275,7 @@ public class TodoController {
     @PostMapping("/delete/{id}")
     @PreAuthorize("hasRole('ADMIN') or @todoService.isOwner(#p0, authentication.name)")
     public String delete(@PathVariable("id") Long id,
+                         @RequestParam(name = "returnTo", required = false) String returnTo,
                          @AuthenticationPrincipal UserDetails userDetails,
                          Authentication authentication) {
         Long userId = requireUserId(userDetails);
@@ -284,12 +285,13 @@ public class TodoController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         todoService.delete(id, scopeUserId);
-        return "redirect:/";
+        return "redirect:" + resolveReturnTo(returnTo);
     }
 
     @PostMapping("/{id}/toggle")
     @PreAuthorize("hasRole('ADMIN') or @todoService.isOwner(#p0, authentication.name)")
     public String toggle(@PathVariable("id") Long id,
+                         @RequestParam(name = "returnTo", required = false) String returnTo,
                          @AuthenticationPrincipal UserDetails userDetails,
                          Authentication authentication) {
         Long userId = requireUserId(userDetails);
@@ -298,18 +300,19 @@ public class TodoController {
         if (!updated) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
-        return "redirect:/";
+        return "redirect:" + resolveReturnTo(returnTo);
     }
 
     @PostMapping("/delete")
     @PreAuthorize("hasRole('ADMIN')")
     public String deleteSelected(@RequestParam(name = "ids", required = false) java.util.List<Long> ids,
+                                 @RequestParam(name = "returnTo", required = false) String returnTo,
                                  @AuthenticationPrincipal UserDetails userDetails) {
         Long userId = requireUserId(userDetails);
         if (ids != null && !ids.isEmpty()) {
             todoService.deleteByIds(ids, null);
         }
-        return "redirect:/";
+        return "redirect:" + resolveReturnTo(returnTo);
     }
 
     @GetMapping("/export/csv")
@@ -386,7 +389,7 @@ public class TodoController {
 
     private String renderIndex(String keyword, Long categoryId, String sort, String dir, Boolean includeCompleted,
                                Integer page, Model model,
-                               Long userId) {
+                               Long userId, String viewName) {
         String normalizedSort = (sort == null || sort.isBlank()) ? "createdAt" : sort;
         String normalizedDir = (dir == null || dir.isBlank()) ? "desc" : dir;
         boolean showCompleted = includeCompleted != null && includeCompleted;
@@ -450,7 +453,7 @@ public class TodoController {
         model.addAttribute("monthlyCompletedRate", monthlyRate);
         model.addAttribute("monthlyCompletedRateText",
                 String.format(Locale.JAPAN, "%.1f", monthlyRate));
-        return "index";
+        return viewName;
     }
 
     private boolean isAdmin(Authentication authentication) {
@@ -459,6 +462,13 @@ public class TodoController {
         }
         return authentication.getAuthorities().stream()
                 .anyMatch(authority -> "ROLE_ADMIN".equals(authority.getAuthority()));
+    }
+
+    private String resolveReturnTo(String returnTo) {
+        if ("/admin/todos".equals(returnTo)) {
+            return returnTo;
+        }
+        return "/";
     }
 
     @GetMapping("/admin/report")
