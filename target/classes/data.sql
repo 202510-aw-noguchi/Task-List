@@ -1,7 +1,7 @@
 INSERT INTO groups (name, color) VALUES
-('製品情報', '#e53935'),
-('Issues', '#43a047'),
-('キャンペーン', '#1e88e5');
+('Products', '#D39CB5'),
+('Issues', '#D4987E'),
+('Campaign', '#8FB896');
 
 INSERT INTO users (username, password, role, email) VALUES
 ('admin', '$2a$10$7EqJtq98hPqEX7fNZaFWoOhi5LNE1P3e/9dZYkTfLZAlJ4Kq5P9z.', 'ROLE_ADMIN', 'admin@example.com'),
@@ -14,10 +14,10 @@ INSERT INTO todos (author, assignee, title, detail, created_at, updated_at, stat
 ('Admin', 'User_A', 'Task 02', 'Sample task 02.', '2026-02-02 09:10:00', '2026-02-02 09:10:00', 'IN_PROGRESS', 'LOW', '2026-02-02', '2026-02-04', 2, 2),
 ('Admin', 'Admin', 'Task 03', 'Sample task 03.', '2026-02-02 09:20:00', '2026-02-02 09:20:00', 'COMPLETED', 'HIGH', '2026-02-02', '2026-02-05', 3, 1),
 ('User_C', 'User_A', 'Task 04', 'Sample task 04.', '2026-02-02 09:30:00', '2026-02-02 09:30:00', 'NOT_STARTED', 'MEDIUM', '2026-02-03', '2026-02-06', 1, 4),
-('User_C', 'User_C', 'Task 05', 'Sample task 05.', '2026-02-02 09:40:00', '2026-02-02 09:40:00', 'NOT_STARTED', 'LOW', '2026-02-04', '2026-02-07', 2, 4),
+('User_C', 'User_C', 'Task 05', 'Sample task 05.', '2026-02-02 09:40:00', '2026-02-02 09:40:00', 'NOT_STARTED', 'LOW', '2026-02-04', '2026-02-07', 3, 4),
 ('User_C', 'User_C', 'Task 06', 'Sample task 06.', '2026-02-02 09:50:00', '2026-02-02 09:50:00', 'COMPLETED', 'HIGH', '2026-02-05', '2026-02-08', 3, 4),
 ('User_C', 'User_C', 'Task 07', 'Sample task 07.', '2026-02-02 10:00:00', '2026-02-02 10:00:00', 'IN_PROGRESS', 'MEDIUM', '2026-02-06', '2026-03-09', 1, 4),
-('User_C', 'User_B', 'Task 08', 'Sample task 08.', '2026-02-02 10:10:00', '2026-02-02 10:10:00', 'NOT_STARTED', 'LOW', '2026-02-03', '2026-02-10', 2, 3),
+('User_C', 'User_B', 'Task 08', 'Sample task 08.', '2026-02-02 10:10:00', '2026-02-02 10:10:00', 'NOT_STARTED', 'LOW', '2026-02-03', '2026-02-10', 3, 3),
 ('User_C', 'User_B', 'Task 09', 'Sample task 09.', '2026-02-02 10:20:00', '2026-02-02 10:20:00', 'COMPLETED', 'HIGH', '2026-02-08', '2026-02-11', 3, 3),
 ('User_C', 'User_B', 'Task 10', 'Sample task 10.', '2026-02-02 10:30:00', '2026-02-02 10:30:00', 'NOT_STARTED', 'MEDIUM', '2026-02-09', '2026-02-12', 1, 3),
 ('User_C', 'User_A', 'Task 11', 'Sample task 11.', '2026-02-02 10:40:00', '2026-02-02 10:40:00', 'NOT_STARTED', 'LOW', '2026-02-10', '2026-02-13', 2, 2),
