@@ -81,6 +81,12 @@
       width: 100%;
       max-width: 520px;
       background: #fff;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    input[type="text"]:focus, input[type="date"]:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.22);
+      outline: none;
     }
     textarea { min-height: 90px; }
     .actions {
