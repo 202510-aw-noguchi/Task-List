@@ -3,6 +3,7 @@ package com.example.todo.service;
 import com.example.todo.entity.Todo;
 import com.example.todo.entity.Category;
 import com.example.todo.entity.Priority;
+import com.example.todo.entity.Status;
 import com.example.todo.entity.TodoHistory;
 import com.example.todo.exception.BusinessException;
 import com.example.todo.dto.MonthlyProgressSummary;
@@ -51,6 +52,7 @@ public class TodoService {
         todo.setTitle(form.getTitle());
         todo.setDetail(form.getDetail());
         todo.setPriority(form.getPriority() == null ? Priority.MEDIUM : form.getPriority());
+        todo.setStatus(form.getStatus() == null ? Status.NOT_STARTED : form.getStatus());
         todo.setCategory(resolveCategory(form.getCategoryId()));
         todo.setStartDate(form.getStartDate());
         todo.setDeadline(form.getDeadline());
@@ -115,6 +117,9 @@ public class TodoService {
         todo.setTitle(form.getTitle());
         todo.setDetail(form.getDetail());
         todo.setPriority(form.getPriority() == null ? Priority.MEDIUM : form.getPriority());
+        todo.setStatus(form.getStatus() == null
+                ? (todo.getStatus() == null ? Status.NOT_STARTED : todo.getStatus())
+                : form.getStatus());
         todo.setCategory(resolveCategory(form.getCategoryId()));
         todo.setStartDate(form.getStartDate());
         todo.setDeadline(form.getDeadline());
@@ -131,12 +136,13 @@ public class TodoService {
         todoRepository.deleteByIdAndUser_Id(id, userId);
     }
 
-    public boolean toggleCompleted(Long id, Long userId) {
+    public boolean advanceStatus(Long id, Long userId) {
         Todo todo = findById(id, userId);
         if (todo == null) {
             return false;
         }
-        todo.setCompleted(!todo.isCompleted());
+        Status current = todo.getStatus() == null ? Status.NOT_STARTED : todo.getStatus();
+        todo.setStatus(current.next());
         todo.setUpdatedAt(LocalDateTime.now());
         todoRepository.save(todo);
         return true;

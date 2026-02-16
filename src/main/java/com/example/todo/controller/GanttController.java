@@ -61,7 +61,7 @@ public class GanttController {
         }
         String groupName = todo.getCategory() != null ? todo.getCategory().getName() : "未設定";
         String groupColor = todo.getCategory() != null ? todo.getCategory().getColor() : null;
-        String status = todo.isCompleted() ? "COMPLETED" : "INCOMPLETE";
+        String status = todo.getStatus() == null ? "NOT_STARTED" : todo.getStatus().name();
         String priority = todo.getPriority() != null ? todo.getPriority().name() : "MEDIUM";
         String name = groupName + " / " + todo.getTitle();
         return Stream.of(new GanttTaskDto(

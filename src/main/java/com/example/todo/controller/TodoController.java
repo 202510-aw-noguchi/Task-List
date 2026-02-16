@@ -1,6 +1,7 @@
 package com.example.todo.controller;
 
 import com.example.todo.entity.Priority;
+import com.example.todo.entity.Status;
 import com.example.todo.entity.Todo;
 import com.example.todo.entity.TodoAttachment;
 import com.example.todo.form.TodoForm;
@@ -96,6 +97,7 @@ public class TodoController {
     public String edit(Model model) {
         TodoForm form = new TodoForm();
         form.setPriority(Priority.MEDIUM);
+        form.setStatus(Status.NOT_STARTED);
         model.addAttribute("todoForm", form);
         model.addAttribute("categories", categoryRepository.findAll());
         return "edit";
@@ -119,6 +121,7 @@ public class TodoController {
         form.setTitle(todo.getTitle());
         form.setDetail(todo.getDetail());
         form.setPriority(todo.getPriority());
+        form.setStatus(todo.getStatus() == null ? Status.NOT_STARTED : todo.getStatus());
         form.setStartDate(todo.getStartDate());
         form.setDeadline(todo.getDeadline());
         if (todo.getCategory() != null) {
@@ -156,7 +159,7 @@ public class TodoController {
             categoryRepository.findById(categoryId).ifPresent(
                     category -> form.setCategoryName(category.getName()));
         } else {
-            form.setCategoryName("未選択");
+            form.setCategoryName("\u672A\u9078\u629E");
         }
         return "confirm";
     }
@@ -181,7 +184,7 @@ public class TodoController {
             categoryRepository.findById(categoryId).ifPresent(
                     category -> form.setCategoryName(category.getName()));
         } else {
-            form.setCategoryName("未選択");
+            form.setCategoryName("\u672A\u9078\u629E");
         }
         if (form.getId() == null) {
             Todo created = todoService.save(form, userId);
@@ -208,6 +211,7 @@ public class TodoController {
         if (!model.containsAttribute("todoForm")) {
             TodoForm form = new TodoForm();
             form.setPriority(Priority.MEDIUM);
+            form.setStatus(Status.NOT_STARTED);
             model.addAttribute("todoForm", form);
         }
         TodoForm form = (TodoForm) model.getAttribute("todoForm");
@@ -256,6 +260,7 @@ public class TodoController {
             form.setTitle(todo.getTitle());
             form.setDetail(todo.getDetail());
             form.setPriority(todo.getPriority());
+            form.setStatus(todo.getStatus() == null ? Status.NOT_STARTED : todo.getStatus());
             if (todo.getCategory() != null) {
                 form.setCategoryId(todo.getCategory().getId());
                 form.setCategoryName(todo.getCategory().getName());
@@ -289,7 +294,7 @@ public class TodoController {
                          Authentication authentication) {
         Long userId = requireUserId(userDetails);
         Long scopeUserId = isAdmin(authentication) ? null : userId;
-        boolean updated = todoService.toggleCompleted(id, scopeUserId);
+        boolean updated = todoService.advanceStatus(id, scopeUserId);
         if (!updated) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
@@ -323,12 +328,12 @@ public class TodoController {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
         StringBuilder sb = new StringBuilder();
-        sb.append("ID,タイトル,登録者,ステータス,作成日").append("\r\n");
+        sb.append("ID,\u30bf\u30a4\u30c8\u30eb,\u767b\u9332\u8005,\u30b9\u30c6\u30fc\u30bf\u30b9,\u4f5c\u6210\u65e5").append("\r\n");
         for (Todo todo : todos) {
             sb.append(csv(todo.getId()))
               .append(',').append(csv(todo.getTitle()))
               .append(',').append(csv(todo.getAuthor()))
-              .append(',').append(csv(todo.isCompleted() ? "完了" : "未完了"))
+              .append(',').append(csv(statusLabel(todo.getStatus())))
               .append(',').append(csv(todo.getCreatedAt() != null ? dtf.format(todo.getCreatedAt()) : ""))
               .append("\r\n");
         }
@@ -354,6 +359,17 @@ public class TodoController {
             return "\"" + s + "\"";
         }
         return s;
+    }
+
+    private static String statusLabel(Status status) {
+        if (status == null) {
+            return "\u672A\u7740\u624B";
+        }
+        return switch (status) {
+            case NOT_STARTED -> "\u672A\u7740\u624B";
+            case IN_PROGRESS -> "\u5BFE\u5FDC\u4E2D";
+            case COMPLETED -> "\u5B8C\u4E86";
+        };
     }
 
     private Long requireUserId(UserDetails userDetails) {
@@ -417,12 +433,20 @@ public class TodoController {
             summary = new MonthlyProgressSummary();
         }
         long monthlyTotal = summary.getTotalCount();
+        long monthlyNotStarted = summary.getNotStartedCount();
+        long monthlyInProgress = summary.getInProgressCount();
         long monthlyCompleted = summary.getCompletedCount();
-        long monthlyIncomplete = summary.getIncompleteCount();
+        double monthlyNotStartedRate = monthlyTotal == 0 ? 0.0 : (monthlyNotStarted * 100.0) / monthlyTotal;
+        double monthlyInProgressRate = monthlyTotal == 0 ? 0.0 : (monthlyInProgress * 100.0) / monthlyTotal;
         double monthlyRate = monthlyTotal == 0 ? 0.0 : (monthlyCompleted * 100.0) / monthlyTotal;
+        double monthlyNotStartedEnd = monthlyNotStartedRate;
+        double monthlyInProgressEnd = monthlyNotStartedRate + monthlyInProgressRate;
         model.addAttribute("monthlyTotalCount", monthlyTotal);
+        model.addAttribute("monthlyNotStartedCount", monthlyNotStarted);
+        model.addAttribute("monthlyInProgressCount", monthlyInProgress);
         model.addAttribute("monthlyCompletedCount", monthlyCompleted);
-        model.addAttribute("monthlyIncompleteCount", monthlyIncomplete);
+        model.addAttribute("monthlyNotStartedEnd", monthlyNotStartedEnd);
+        model.addAttribute("monthlyInProgressEnd", monthlyInProgressEnd);
         model.addAttribute("monthlyCompletedRate", monthlyRate);
         model.addAttribute("monthlyCompletedRateText",
                 String.format(Locale.JAPAN, "%.1f", monthlyRate));

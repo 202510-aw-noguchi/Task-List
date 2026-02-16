@@ -28,7 +28,7 @@ CREATE TABLE todos (
   detail TEXT NOT NULL,
   created_at TIMESTAMP NOT NULL,
   updated_at TIMESTAMP NOT NULL,
-  completed BOOLEAN DEFAULT FALSE,
+  status VARCHAR(20) NOT NULL DEFAULT 'NOT_STARTED',
   priority VARCHAR(10) NOT NULL DEFAULT 'MEDIUM',
   start_date DATE,
   due_date DATE,

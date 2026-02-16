@@ -29,8 +29,8 @@ class TodoAttachmentMapperTest {
         jdbcTemplate.update("INSERT INTO groups (id, name, color) VALUES (100, 'Test', '#000')");
         jdbcTemplate.update("INSERT INTO users (id, username, password, role) VALUES (100, 'test-user', 'x', 'ROLE_ADMIN')");
         jdbcTemplate.update(
-                "INSERT INTO todos (id, author, assignee, title, detail, created_at, updated_at, completed, priority, start_date, due_date, group_id, user_id) " +
-                "VALUES (100, 'Admin', 'Admin', 'Test', 'Detail', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, FALSE, 'MEDIUM', NULL, NULL, 100, 100)");
+                "INSERT INTO todos (id, author, assignee, title, detail, created_at, updated_at, status, priority, start_date, due_date, group_id, user_id) " +
+                "VALUES (100, 'Admin', 'Admin', 'Test', 'Detail', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'NOT_STARTED', 'MEDIUM', NULL, NULL, 100, 100)");
     }
 
     @Test

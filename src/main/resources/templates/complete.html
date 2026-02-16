@@ -162,6 +162,10 @@
             <td th:text="${#messages.msg('priority.' + todoForm.priority.name())}">中</td>
           </tr>
           <tr>
+            <th th:text="#{label.status}">状態</th>
+            <td th:text="${todoForm.status != null ? #messages.msg('status.' + todoForm.status.name()) : #messages.msg('status.NOT_STARTED')}">未着手</td>
+          </tr>
+          <tr>
             <th th:text="#{label.category}">カテゴリ</th>
             <td th:text="${todoForm.categoryName}">未選択</td>
           </tr>

@@ -2,6 +2,8 @@ package com.example.todo.dto;
 
 public class MonthlyProgressSummary {
     private long totalCount;
+    private long notStartedCount;
+    private long inProgressCount;
     private long completedCount;
     private long incompleteCount;
 
@@ -11,6 +13,22 @@ public class MonthlyProgressSummary {
 
     public void setTotalCount(long totalCount) {
         this.totalCount = totalCount;
+    }
+
+    public long getNotStartedCount() {
+        return notStartedCount;
+    }
+
+    public void setNotStartedCount(long notStartedCount) {
+        this.notStartedCount = notStartedCount;
+    }
+
+    public long getInProgressCount() {
+        return inProgressCount;
+    }
+
+    public void setInProgressCount(long inProgressCount) {
+        this.inProgressCount = inProgressCount;
     }
 
     public long getCompletedCount() {

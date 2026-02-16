@@ -12,7 +12,7 @@
       t.detail,
       t.created_at AS createdAt,
       t.updated_at AS updatedAt,
-      t.completed,
+      t.status,
       t.priority,
       t.start_date AS startDate,
       t.due_date AS deadline,
@@ -33,13 +33,13 @@
         AND t.group_id = #{categoryId}
       </if>
       <if test="includeCompleted == false">
-        AND t.completed = FALSE
+        AND t.status != 'COMPLETED'
       </if>
     </where>
     ORDER BY
     <choose>
       <when test="sort == 'title'">t.title</when>
-      <when test="sort == 'status'">t.completed</when>
+      <when test="sort == 'status'">t.status</when>
       <when test="sort == 'priority'">t.priority</when>
       <when test="sort == 'deadline'">t.due_date</when>
       <otherwise>t.created_at</otherwise>
@@ -65,7 +65,7 @@
         AND t.group_id = #{categoryId}
       </if>
       <if test="includeCompleted == false">
-        AND t.completed = FALSE
+        AND t.status != 'COMPLETED'
       </if>
     </where>
   </select>
@@ -88,7 +88,7 @@
       t.id,
       t.author,
       t.title,
-      t.completed,
+      t.status,
       t.created_at AS createdAt
     FROM todos t
     <where>
@@ -105,7 +105,7 @@
     ORDER BY
     <choose>
       <when test="sort == 'title'">t.title</when>
-      <when test="sort == 'status'">t.completed</when>
+      <when test="sort == 'status'">t.status</when>
       <when test="sort == 'deadline'">t.due_date</when>
       <when test="sort == 'priority'">t.priority</when>
       <otherwise>t.created_at</otherwise>
@@ -120,8 +120,8 @@
     SELECT
       user_id AS userId,
       COUNT(*) AS totalCount,
-      SUM(CASE WHEN completed = FALSE THEN 1 ELSE 0 END) AS incompleteCount,
-      SUM(CASE WHEN completed = FALSE AND due_date IS NOT NULL AND due_date &lt; CURRENT_DATE THEN 1 ELSE 0 END) AS overdueCount
+      SUM(CASE WHEN status != 'COMPLETED' THEN 1 ELSE 0 END) AS incompleteCount,
+      SUM(CASE WHEN status != 'COMPLETED' AND due_date IS NOT NULL AND due_date &lt; CURRENT_DATE THEN 1 ELSE 0 END) AS overdueCount
     FROM todos
     WHERE user_id IN
     <foreach collection="userIds" item="id" open="(" separator="," close=")">
@@ -133,8 +133,10 @@
   <select id="findMonthlyProgressSummary" resultType="com.example.todo.dto.MonthlyProgressSummary">
     SELECT
       COUNT(*) AS totalCount,
-      SUM(CASE WHEN completed = TRUE THEN 1 ELSE 0 END) AS completedCount,
-      SUM(CASE WHEN completed = FALSE THEN 1 ELSE 0 END) AS incompleteCount
+      SUM(CASE WHEN status = 'NOT_STARTED' THEN 1 ELSE 0 END) AS notStartedCount,
+      SUM(CASE WHEN status = 'IN_PROGRESS' THEN 1 ELSE 0 END) AS inProgressCount,
+      SUM(CASE WHEN status = 'COMPLETED' THEN 1 ELSE 0 END) AS completedCount,
+      SUM(CASE WHEN status != 'COMPLETED' THEN 1 ELSE 0 END) AS incompleteCount
     FROM todos
     <where>
       <if test="userId != null">

@@ -47,8 +47,9 @@ public class Todo {
     @Column(name = "due_date")
     private LocalDate deadline;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private boolean completed;
+    private Status status = Status.NOT_STARTED;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -147,16 +148,25 @@ public class Todo {
         this.startDate = startDate;
     }
 
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    // Backward-compatible helpers for existing boolean-completed usage.
     public boolean isCompleted() {
-        return completed;
+        return status == Status.COMPLETED;
     }
 
     public boolean getCompleted() {
-        return completed;
+        return isCompleted();
     }
 
     public void setCompleted(boolean completed) {
-        this.completed = completed;
+        this.status = completed ? Status.COMPLETED : Status.NOT_STARTED;
     }
 
     public Priority getPriority() {

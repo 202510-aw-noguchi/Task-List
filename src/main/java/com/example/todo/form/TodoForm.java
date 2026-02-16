@@ -3,6 +3,7 @@ package com.example.todo.form;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import com.example.todo.entity.Priority;
+import com.example.todo.entity.Status;
 import java.time.LocalDate;
 
 public class TodoForm {
@@ -24,6 +25,7 @@ public class TodoForm {
     private String detail;
 
     private Priority priority;
+    private Status status = Status.NOT_STARTED;
 
     private Long categoryId;
 
@@ -79,6 +81,14 @@ public class TodoForm {
 
     public void setPriority(Priority priority) {
         this.priority = priority;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public Long getCategoryId() {

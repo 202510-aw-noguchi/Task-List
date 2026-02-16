@@ -318,7 +318,7 @@
       </div>
 
       <div class="matrix" id="matrix"
-           th:attr="data-label-group=#{label.category},data-label-title=#{label.title},data-label-assignee=#{label.assignee},data-label-status=#{label.status},data-label-priority=#{label.priority},data-priority-high=#{priority.HIGH},data-priority-medium=#{priority.MEDIUM},data-priority-low=#{priority.LOW},data-status-completed=#{status.completed},data-status-incomplete=#{status.incomplete}">
+           th:attr="data-label-group=#{label.category},data-label-title=#{label.title},data-label-assignee=#{label.assignee},data-label-status=#{label.status},data-label-priority=#{label.priority},data-priority-high=#{priority.HIGH},data-priority-medium=#{priority.MEDIUM},data-priority-low=#{priority.LOW},data-status-not-started=#{status.NOT_STARTED},data-status-in-progress=#{status.IN_PROGRESS},data-status-completed=#{status.COMPLETED}">
       </div>
 
       <div class="summary-title" th:text="#{gantt.summaryTitle}">担当者別タスク</div>
@@ -462,7 +462,9 @@
               const groupStyle = t.groupColor ? `style="background:${t.groupColor};"` : "";
               const statusLabel = t.status === "COMPLETED"
                 ? (matrixEl.dataset.statusCompleted || "Completed")
-                : (matrixEl.dataset.statusIncomplete || "Incomplete");
+                : (t.status === "IN_PROGRESS"
+                  ? (matrixEl.dataset.statusInProgress || "In Progress")
+                  : (matrixEl.dataset.statusNotStarted || "Not Started"));
               return `
                 <tr class="${isDone ? "row-done" : ""}">
                   <td class="sticky"><span class="group-badge" ${groupStyle}>${t.groupName || "-"}</span></td>

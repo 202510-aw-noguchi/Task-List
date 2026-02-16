@@ -16,7 +16,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
     @Query("select t from Todo t where t.title like concat('%', :keyword, '%') order by t.createdAt desc")
     List<Todo> searchByTitle(@Param("keyword") String keyword);
 
-    @Query("select t from Todo t join fetch t.user where t.completed = false and t.deadline = :deadline")
+    @Query("select t from Todo t join fetch t.user where t.status <> com.example.todo.entity.Status.COMPLETED and t.deadline = :deadline")
     List<Todo> findDueForReminder(@Param("deadline") LocalDate deadline);
 
     Optional<Todo> findByIdAndUser_Id(Long id, Long userId);

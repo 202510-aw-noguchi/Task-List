@@ -221,6 +221,17 @@
             </td>
           </tr>
           <tr>
+            <th th:text="#{label.status}">状態</th>
+            <td>
+              <select th:field="*{status}">
+                <option th:each="s : ${T(com.example.todo.entity.Status).values()}"
+                        th:value="${s}"
+                        th:selected="${s} == *{status}"
+                        th:text="${#messages.msg('status.' + s.name())}">未着手</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
             <th th:text="#{label.category}">カテゴリ</th>
             <td>
               <select th:field="*{categoryId}">

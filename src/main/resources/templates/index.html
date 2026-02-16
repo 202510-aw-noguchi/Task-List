@@ -257,7 +257,7 @@
       background: #fff;
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 12px 14px;
+      padding: 10px 12px;
       box-shadow: 0 6px 16px rgba(31, 41, 55, 0.05);
       width: 100%;
       height: var(--api-card-height);
@@ -265,23 +265,23 @@
       display: flex;
     }
     .progress-title {
-      margin: 0 0 6px;
-      font-size: 14px;
+      margin: 0 0 2px;
+      font-size: 13px;
       font-weight: 700;
     }
     .progress-content {
       display: flex;
-      align-items: stretch;
+      align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 10px;
       flex: 1;
       width: 100%;
     }
     .progress-left {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      gap: 6px;
+      justify-content: flex-start;
+      gap: 2px;
       min-width: 0;
       flex: 1;
     }
@@ -292,11 +292,12 @@
     }
     .progress-stats {
       display: grid;
-      gap: 4px;
-      font-size: 12px;
+      gap: 2px;
+      font-size: 11px;
+      line-height: 1.15;
     }
     .progress-stats strong {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 700;
     }
     .progress-donut {
@@ -304,8 +305,9 @@
       aspect-ratio: 1 / 1;
       border-radius: 50%;
       background:
-        conic-gradient(#14b8a6 0 var(--progress),
-                       #fdba74 var(--progress) 100%);
+        conic-gradient(#94a3b8 0 var(--not-started-end),
+                       #f59e0b var(--not-started-end) var(--in-progress-end),
+                       #14b8a6 var(--in-progress-end) 100%);
       position: relative;
       flex-shrink: 0;
       display: flex;
@@ -329,11 +331,11 @@
       color: var(--text);
     }
     .legend-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       display: inline-block;
-      margin-right: 6px;
+      margin-right: 4px;
     }
     .card {
       margin-top: 16px;
@@ -541,21 +543,26 @@
           <div class="fx-meta">読み込み中...</div>
         </div>
         <div class="progress-card" aria-live="polite">
-          <div class="progress-content" th:style="'--progress:' + ${monthlyCompletedRate} + '%;'">
+          <div class="progress-content"
+               th:style="'--not-started-end:' + ${monthlyNotStartedEnd} + '%; --in-progress-end:' + ${monthlyInProgressEnd} + '%;'">
             <div class="progress-left">
-              <p class="progress-title">当月完了度</p>
+              <p class="progress-title">当月進捗</p>
               <div class="progress-stats">
+                <div>
+                  <span class="legend-dot" style="background:#94a3b8;"></span>
+                  未着手 <strong th:text="${monthlyNotStartedCount}">0</strong>
+                </div>
+                <div>
+                  <span class="legend-dot" style="background:#f59e0b;"></span>
+                  対応中 <strong th:text="${monthlyInProgressCount}">0</strong>
+                </div>
                 <div>
                   <span class="legend-dot" style="background:#14b8a6;"></span>
                   完了 <strong th:text="${monthlyCompletedCount}">0</strong>
                 </div>
-                <div>
-                  <span class="legend-dot" style="background:#fdba74;"></span>
-                  未完了 <strong th:text="${monthlyIncompleteCount}">0</strong>
-                </div>
               </div>
             </div>
-            <div class="progress-donut" role="img" aria-label="当月完了度">
+            <div class="progress-donut" role="img" aria-label="当月進捗">
               <span class="progress-rate" th:text="${monthlyCompletedRateText} + '%'">0.0%</span>
             </div>
           </div>
@@ -652,8 +659,7 @@
         <td th:text="${todo.title}">title</td>
         <td th:text="${todo.assignee}">assignee</td>
         <td>
-          <span th:if="${todo.completed}" th:text="#{status.completed}">完了</span>
-          <span th:unless="${todo.completed}" th:text="#{status.incomplete}">未完了</span>
+          <span th:text="${todo.status != null ? #messages.msg('status.' + todo.status.name()) : #messages.msg('status.NOT_STARTED')}">未着手</span>
         </td>
         <td>
           <span th:text="${#messages.msg('priority.' + todo.priority.name())}"
@@ -681,7 +687,8 @@
           <button type="submit"
                   class="action-button"
                   th:formaction="@{/{id}/toggle(id=${todo.id})}"
-                  th:text="${todo.completed} ? #{action.toggleIncomplete} : #{action.toggleComplete}">切替</button>
+                  th:text="${todo.status != null and todo.status.name() == 'NOT_STARTED'} ? #{action.toInProgress} :
+                           (${todo.status != null and todo.status.name() == 'IN_PROGRESS'} ? #{action.toCompleted} : #{action.toNotStarted})">切替</button>
         </td>
         <td>
           <a th:href="@{/revision/{id}(id=${todo.id})}" class="action-button link-button"

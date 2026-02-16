@@ -3,6 +3,7 @@ package com.example.todo.controller;
 import com.example.todo.api.ApiResponse;
 import com.example.todo.entity.Todo;
 import com.example.todo.entity.Priority;
+import com.example.todo.entity.Status;
 import com.example.todo.exception.TodoNotFoundException;
 import com.example.todo.form.TodoForm;
 import com.example.todo.service.TodoService;
@@ -58,6 +59,9 @@ public class TodoApiController {
         Long userId = requireUserId(authentication);
         if (form.getPriority() == null) {
             form.setPriority(Priority.MEDIUM);
+        }
+        if (form.getStatus() == null) {
+            form.setStatus(Status.NOT_STARTED);
         }
         Todo created = todoService.save(form, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(created));

@@ -167,6 +167,7 @@
         <input type="hidden" th:field="*{title}" />
         <input type="hidden" th:field="*{detail}" />
         <input type="hidden" th:field="*{priority}" />
+        <input type="hidden" th:field="*{status}" />
         <input type="hidden" th:field="*{categoryId}" />
         <input type="hidden" th:field="*{categoryName}" />
         <input type="hidden" th:field="*{startDate}" />
@@ -192,6 +193,10 @@
             <tr>
               <th th:text="#{label.priority}">優先度</th>
               <td th:text="${#messages.msg('priority.' + todoForm.priority.name())}">中</td>
+            </tr>
+            <tr>
+              <th th:text="#{label.status}">状態</th>
+              <td th:text="${todoForm.status != null ? #messages.msg('status.' + todoForm.status.name()) : #messages.msg('status.NOT_STARTED')}">未着手</td>
             </tr>
             <tr>
               <th th:text="#{label.category}">カテゴリ</th>
