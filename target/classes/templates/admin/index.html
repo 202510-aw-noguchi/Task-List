@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
   <title>管理ページ</title>
   <style>
     :root {
@@ -15,11 +15,7 @@
       --accent: #2563eb;
       --accent-weak: rgba(37, 99, 235, 0.08);
     }
-
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       padding: 24px;
@@ -27,12 +23,7 @@
       color: var(--text);
       font-family: "Segoe UI", "Noto Sans JP", system-ui, -apple-system, sans-serif;
     }
-
-    .page {
-      max-width: 920px;
-      margin: 0 auto;
-    }
-
+    .page { max-width: 920px; margin: 0 auto; }
     .header {
       position: relative;
       padding: 20px 24px;
@@ -41,29 +32,10 @@
       border-radius: 16px;
       box-shadow: 0 6px 20px rgba(31, 41, 55, 0.06);
     }
-    .header-title {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .header-logo {
-      width: 48px;
-      height: 48px;
-      object-fit: contain;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 24px;
-      letter-spacing: 0.02em;
-    }
-
-    .sub {
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
+    .header-title { display: flex; align-items: center; gap: 12px; }
+    .header-logo { width: 48px; height: 48px; object-fit: contain; }
+    h1 { margin: 0; font-size: 24px; letter-spacing: 0.02em; }
+    .sub { margin-top: 4px; color: var(--muted); font-size: 13px; }
     .auth {
       position: absolute;
       top: 18px;
@@ -74,11 +46,7 @@
       font-size: 13px;
       color: var(--muted);
     }
-
-    .auth strong {
-      color: var(--text);
-    }
-
+    .auth strong { color: var(--text); }
     .auth button {
       border: 1px solid var(--border);
       background: #fff;
@@ -100,10 +68,7 @@
       text-decoration: none;
       font-weight: 600;
     }
-    .breadcrumb-sep {
-      color: #9ca3af;
-    }
-
+    .breadcrumb-sep { color: #9ca3af; }
     .card {
       margin-top: 16px;
       background: var(--card);
@@ -112,97 +77,73 @@
       padding: 16px;
       box-shadow: 0 10px 24px rgba(31, 41, 55, 0.06);
     }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: fixed;
+    .material-symbols-outlined {
+      font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+      font-size: 88px;
+      line-height: 1;
     }
-
-    th,
-    td {
-      border-bottom: 1px solid var(--border);
-      padding: 10px 4px;
-      text-align: left;
-      font-size: 14px;
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
     }
-
-    th {
-      color: var(--muted);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      font-size: 11px;
-    }
-
-    tr:last-child td {
-      border-bottom: none;
-    }
-
-    .menu-label {
+    .menu-tile {
       display: flex;
       flex-direction: column;
-      gap: 2px;
-    }
-
-    .menu-label .en {
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .menu-link {
-      color: inherit;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--text);
       text-decoration: none;
-      display: block;
+      aspect-ratio: 1 / 1;
+      transition: transform 0.08s ease, border-color 0.2s ease, box-shadow 0.2s ease;
     }
-
-    .menu-link:hover .menu-label {
-      color: var(--accent);
+    .menu-tile:hover {
+      transform: translateY(-1px);
+      border-color: #bfd0f3;
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.08);
     }
-
-    .link-cell a {
+    .menu-icon {
+      width: 108px;
+      height: 108px;
+      border-radius: 10px;
+      background: transparent;
+      color: #6b7280;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      background: var(--accent-weak);
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 700;
-      transition: transform 0.08s ease, background 0.2s ease;
+      flex-shrink: 0;
     }
-
-    .link-cell {
-      width: 40px;
-      text-align: left;
-      padding-left: 0;
-      padding-right: 0;
-    }
-
-    .menu-cell {
-      padding-left: 0;
-      text-align: left;
-    }
-
-    .link-cell a:hover {
-      background: rgba(37, 99, 235, 0.16);
-      transform: translateX(2px);
-    }
-
-    .footer {
-      margin-top: 14px;
-    }
-
+    .menu-label { display: flex; flex-direction: column; gap: 2px; text-align: center; }
+    .menu-label .en { color: var(--muted); font-size: 12px; }
+    .footer { margin-top: 14px; }
     .footer a {
       color: var(--accent);
       text-decoration: none;
       font-weight: 600;
     }
+    @media (max-width: 1025px) {
+      .menu-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 750px) {
+      .header {
+        display: grid;
+        grid-template-columns: 1fr;
+        row-gap: 10px;
+      }
+      .header .auth {
+        position: static;
+        justify-content: flex-start;
+        max-width: 100%;
+      }
+      .menu-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
-
 <body>
   <div class="page">
     <div class="header">
@@ -222,6 +163,7 @@
         </form>
       </div>
     </div>
+
     <nav class="breadcrumbs" aria-label="breadcrumb">
       <a th:href="@{/}">トップ</a>
       <span class="breadcrumb-sep">/</span>
@@ -229,104 +171,40 @@
     </nav>
 
     <div class="card">
-      <table>
-        <thead>
-          <tr>
-            <th>リンク</th>
-            <th>メニュー</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="link-cell"><a th:href="@{/admin/todos}">▶</a></td>
-            <td class="menu-cell">
-              <a class="menu-link" th:href="@{/admin/todos}">
-                <div class="menu-label">
-                  <span>全ToDo一覧</span>
-                  <span class="en">All Todos</span>
-                </div>
-              </a>
-            </td>
-          </tr>
-          <tr>
-            <td class="link-cell"><a th:href="@{/admin/users}">▶</a></td>
-            <td class="menu-cell">
-              <a class="menu-link" th:href="@{/admin/users}">
-                <div class="menu-label">
-                  <span>ユーザー一覧</span>
-                  <span class="en">User List</span>
-                </div>
-              </a>
-            </td>
-          </tr>
-          <tr>
-            <td class="link-cell"><a th:href="@{/admin/users/manage}">▶</a></td>
-            <td class="menu-cell">
-              <a class="menu-link" th:href="@{/admin/users/manage}">
-                <div class="menu-label">
-                  <span>ユーザー管理</span>
-                  <span class="en">User Management</span>
-                </div>
-              </a>
-            </td>
-          </tr>
-          <tr>
-            <td class="link-cell"><a th:href="@{/admin/groups}">▶</a></td>
-            <td class="menu-cell">
-              <a class="menu-link" th:href="@{/admin/groups}">
-                <div class="menu-label">
-                  <span>グループ管理</span>
-                  <span class="en">Group Management</span>
-                </div>
-              </a>
-            </td>
-          </tr>
-          <tr>
-            <td class="link-cell"><a th:href="@{/admin/report}">▶</a></td>
-            <td class="menu-cell">
-              <a class="menu-link" th:href="@{/admin/report}">
-                <div class="menu-label">
-                  <span>レポート生成</span>
-                  <span class="en">Generate Report</span>
-                </div>
-              </a>
-            </td>
-          </tr>
-          <tr>
-            <td class="link-cell"><a th:href="@{/admin/mail-settings}">▶</a></td>
-            <td class="menu-cell">
-              <a class="menu-link" th:href="@{/admin/mail-settings}">
-                <div class="menu-label">
-                  <span>リマインダーメール送信元設定</span>
-                  <span class="en">Reminder Sender Settings</span>
-                </div>
-              </a>
-            </td>
-          </tr>
-          <tr>
-            <td class="link-cell"><a th:href="@{/h2-console}" target="_blank" rel="noopener">▶</a></td>
-            <td class="menu-cell">
-              <a class="menu-link" th:href="@{/h2-console}" target="_blank" rel="noopener">
-                <div class="menu-label">
-                  <span>H2 Console</span>
-                  <span class="en">Database Console</span>
-                </div>
-              </a>
-            </td>
-          </tr>
-          <tr>
-            <td class="link-cell"><a th:href="@{/export/csv}">▶</a></td>
-            <td class="menu-cell">
-              <a class="menu-link" th:href="@{/export/csv}">
-                <div class="menu-label">
-                  <span>CSVダウンロード</span>
-                  <span class="en">Download CSV</span>
-                </div>
-              </a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="menu-grid">
+        <a class="menu-tile" th:href="@{/admin/todos}">
+          <span class="menu-icon"><span class="material-symbols-outlined">checklist</span></span>
+          <span class="menu-label"><span>全ToDo一覧</span><span class="en">All Todos</span></span>
+        </a>
+        <a class="menu-tile" th:href="@{/admin/users}">
+          <span class="menu-icon"><span class="material-symbols-outlined">group</span></span>
+          <span class="menu-label"><span>ユーザー一覧</span><span class="en">User List</span></span>
+        </a>
+        <a class="menu-tile" th:href="@{/admin/users/manage}">
+          <span class="menu-icon"><span class="material-symbols-outlined">manage_accounts</span></span>
+          <span class="menu-label"><span>ユーザー管理</span><span class="en">User Management</span></span>
+        </a>
+        <a class="menu-tile" th:href="@{/admin/groups}">
+          <span class="menu-icon"><span class="material-symbols-outlined">category</span></span>
+          <span class="menu-label"><span>グループ管理</span><span class="en">Group Management</span></span>
+        </a>
+        <a class="menu-tile" th:href="@{/admin/report}">
+          <span class="menu-icon"><span class="material-symbols-outlined">description</span></span>
+          <span class="menu-label"><span>レポート生成</span><span class="en">Generate Report</span></span>
+        </a>
+        <a class="menu-tile" th:href="@{/admin/mail-settings}">
+          <span class="menu-icon"><span class="material-symbols-outlined">mail</span></span>
+          <span class="menu-label"><span>リマインダーメール送信元設定</span><span class="en">Reminder Sender Settings</span></span>
+        </a>
+        <a class="menu-tile" th:href="@{/h2-console}" target="_blank" rel="noopener">
+          <span class="menu-icon"><span class="material-symbols-outlined">database</span></span>
+          <span class="menu-label"><span>H2 Console</span><span class="en">Database Console</span></span>
+        </a>
+        <a class="menu-tile" th:href="@{/export/csv}">
+          <span class="menu-icon"><span class="material-symbols-outlined">download</span></span>
+          <span class="menu-label"><span>CSVダウンロード</span><span class="en">Download CSV</span></span>
+        </a>
+      </div>
     </div>
 
     <div class="footer">
@@ -334,5 +212,4 @@
     </div>
   </div>
 </body>
-
 </html>
