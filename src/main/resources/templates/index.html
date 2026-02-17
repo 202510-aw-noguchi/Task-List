@@ -464,6 +464,14 @@
       gap: 8px;
       min-height: 30px;
     }
+    .board-column.is-collapsed .board-list {
+      display: none;
+    }
+    .board-column.is-collapsed {
+      min-height: 0;
+      gap: 0;
+      padding-bottom: 0;
+    }
     .todo-card {
       background: #fff;
       border: 3px solid var(--border);
@@ -686,6 +694,24 @@
       .board-header {
         justify-content: center;
         gap: 10px;
+        cursor: pointer;
+        position: relative;
+        padding-right: 28px;
+      }
+      .board-header::after {
+        content: "▼";
+        font-size: 2em;
+        line-height: 1;
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+      .board-column.is-collapsed .board-header::after {
+        content: "▼";
+      }
+      .board-column:not(.is-collapsed) .board-header::after {
+        content: "▲";
       }
       .card-actions {
         position: static;
@@ -909,6 +935,7 @@
           <div class="board-header">
             <span class="board-header-title">
               <span>完了</span>
+              <span class="board-count">0件</span>
               <a th:if="${showAllCompletedCards}"
                  th:href="@{/(keyword=${keyword}, categoryId=${categoryId}, includeCompleted=${includeCompleted}, showAllCompleted=false, sort='createdAt', dir='desc')}"
                  class="action-button">完了アイテムを非表示</a>
@@ -916,7 +943,6 @@
                  th:href="@{/(keyword=${keyword}, categoryId=${categoryId}, includeCompleted=${includeCompleted}, showAllCompleted=true, sort='createdAt', dir='desc')}"
                  class="action-button">すべて表示</a>
             </span>
-            <span class="board-count">0件</span>
           </div>
           <div class="board-list">
             <article class="todo-card"
@@ -1059,6 +1085,7 @@
       var draggingCard = null;
       var suppressClickOnce = false;
       var columns = document.querySelectorAll('.board-column');
+      var wasMobile = window.matchMedia('(max-width: 750px)').matches;
       var detailModal = document.getElementById('detail-modal');
       var detailCloseX = document.getElementById('detail-close-x');
       var detailEdit = document.getElementById('detail-edit');
@@ -1105,6 +1132,26 @@
         });
       }
 
+      function isMobileBoard() {
+        return window.matchMedia('(max-width: 750px)').matches;
+      }
+
+      function applyAccordionLayout(resetState) {
+        var mobile = isMobileBoard();
+        if (mobile) {
+          if (resetState) {
+            columns.forEach(function (col) {
+              col.classList.add('is-collapsed');
+            });
+          }
+        } else if (resetState) {
+          columns.forEach(function (col) {
+            col.classList.remove('is-collapsed');
+          });
+        }
+        wasMobile = mobile;
+      }
+
       function bindDragHandlers(card) {
         card.addEventListener('dragstart', function (e) {
           draggingCard = card;
@@ -1138,6 +1185,32 @@
       document.querySelectorAll('.todo-card').forEach(function (card) {
         bindDragHandlers(card);
         bindDetailHandlers(card);
+      });
+
+      columns.forEach(function (column) {
+        var header = column.querySelector('.board-header');
+        if (!header) return;
+        header.addEventListener('click', function (e) {
+          if (!isMobileBoard()) return;
+          if (e.target.closest('a,button,input,textarea,select,label,form')) return;
+          var opening = column.classList.contains('is-collapsed');
+          if (opening) {
+            columns.forEach(function (other) {
+              if (other !== column) other.classList.add('is-collapsed');
+            });
+            column.classList.remove('is-collapsed');
+          } else {
+            column.classList.add('is-collapsed');
+          }
+        });
+      });
+
+      applyAccordionLayout(true);
+      window.addEventListener('resize', function () {
+        var mobile = isMobileBoard();
+        if (mobile !== wasMobile) {
+          applyAccordionLayout(true);
+        }
       });
 
       if (detailCloseX) {
