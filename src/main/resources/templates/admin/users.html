@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="UTF-8" />
@@ -14,9 +14,7 @@
       --accent: #2563eb;
       --accent-weak: rgba(37, 99, 235, 0.08);
     }
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       padding: 24px;
@@ -24,10 +22,7 @@
       color: var(--text);
       font-family: "Segoe UI", "Noto Sans JP", system-ui, -apple-system, sans-serif;
     }
-    .page {
-      max-width: 920px;
-      margin: 0 auto;
-    }
+    .page { max-width: 920px; margin: 0 auto; }
     .header {
       position: relative;
       padding: 20px 24px;
@@ -67,9 +62,7 @@
       font-size: 13px;
       color: var(--muted);
     }
-    .auth strong {
-      color: var(--text);
-    }
+    .auth strong { color: var(--text); }
     .auth button {
       border: 1px solid var(--border);
       background: #fff;
@@ -91,9 +84,7 @@
       text-decoration: none;
       font-weight: 600;
     }
-    .breadcrumb-sep {
-      color: #9ca3af;
-    }
+    .breadcrumb-sep { color: #9ca3af; }
     .card {
       margin-top: 16px;
       background: var(--card);
@@ -119,12 +110,8 @@
       letter-spacing: 0.06em;
       font-size: 11px;
     }
-    tr:last-child td {
-      border-bottom: none;
-    }
-    .footer {
-      margin-top: 14px;
-    }
+    tr:last-child td { border-bottom: none; }
+    .footer { margin-top: 14px; }
     .footer a {
       color: var(--accent);
       text-decoration: none;
@@ -173,7 +160,7 @@
         <img class="header-logo" src="/images/animal_hashibirokou_manage.png" alt="アイコン" />
         <div>
           <h1>ユーザー一覧</h1>
-          <div class="sub">User Management</div>
+          <div class="sub">User List</div>
         </div>
       </div>
 
@@ -185,6 +172,7 @@
         </form>
       </div>
     </div>
+
     <nav class="breadcrumbs" aria-label="breadcrumb">
       <a th:href="@{/}">トップ</a>
       <span class="breadcrumb-sep">/</span>
@@ -223,7 +211,7 @@
     </div>
 
     <div class="footer">
-      <a th:href="@{/admin}">管理メニューへ戻る</a>
+      <a th:href="@{/admin}">管理トップへ戻る</a>
     </div>
   </div>
 </body>

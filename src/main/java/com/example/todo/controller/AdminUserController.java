@@ -1,4 +1,4 @@
-package com.example.todo.controller;
+﻿package com.example.todo.controller;
 
 import com.example.todo.entity.AppUser;
 import com.example.todo.repository.TodoRepository;
@@ -66,7 +66,7 @@ public class AdminUserController {
         user.setEmail(trimmedEmail.isEmpty() ? null : trimmedEmail);
         userRepository.save(user);
 
-        redirectAttributes.addFlashAttribute("message", "ユーザーを作成しました。");
+        redirectAttributes.addFlashAttribute("message", "ユーザーを追加しました。");
         return "redirect:/admin/users/manage";
     }
 

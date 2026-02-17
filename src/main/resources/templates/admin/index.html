@@ -79,7 +79,7 @@
     }
     .material-symbols-outlined {
       font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
-      font-size: 88px;
+      font-size: clamp(28px, 7vw, 88px);
       line-height: 1;
     }
     .menu-grid {
@@ -99,7 +99,8 @@
       background: #fff;
       color: var(--text);
       text-decoration: none;
-      aspect-ratio: 1 / 1;
+      height: clamp(120px, 22vw, 210px);
+      overflow: hidden;
       transition: transform 0.08s ease, border-color 0.2s ease, box-shadow 0.2s ease;
     }
     .menu-tile:hover {
@@ -108,8 +109,8 @@
       box-shadow: 0 6px 16px rgba(37, 99, 235, 0.08);
     }
     .menu-icon {
-      width: 108px;
-      height: 108px;
+      width: clamp(36px, 9vw, 108px);
+      height: clamp(36px, 9vw, 108px);
       border-radius: 10px;
       background: transparent;
       color: #6b7280;
@@ -118,16 +119,13 @@
       justify-content: center;
       flex-shrink: 0;
     }
-    .menu-label { display: flex; flex-direction: column; gap: 2px; text-align: center; }
-    .menu-label .en { color: var(--muted); font-size: 12px; }
+    .menu-label { display: flex; flex-direction: column; gap: 2px; text-align: center; font-size: clamp(10px, 2.1vw, 16px); }
+    .menu-label .en { color: var(--muted); font-size: clamp(9px, 1.7vw, 12px); }
     .footer { margin-top: 14px; }
     .footer a {
       color: var(--accent);
       text-decoration: none;
       font-weight: 600;
-    }
-    @media (max-width: 1025px) {
-      .menu-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
     @media (max-width: 750px) {
       .header {
@@ -140,7 +138,6 @@
         justify-content: flex-start;
         max-width: 100%;
       }
-      .menu-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>

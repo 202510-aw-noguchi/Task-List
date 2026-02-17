@@ -1,10 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>リマインダーメール送信元設定</title>
+  <title>リマインダーメール設定</title>
   <style>
     :root {
       --bg: #f6f7fb;
@@ -13,15 +12,10 @@
       --muted: #6b7280;
       --border: #e5e7eb;
       --accent: #2563eb;
-      --accent-weak: rgba(37, 99, 235, 0.08);
       --danger: #ef4444;
       --success: #10b981;
     }
-
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       padding: 24px;
@@ -29,12 +23,7 @@
       color: var(--text);
       font-family: "Segoe UI", "Noto Sans JP", system-ui, -apple-system, sans-serif;
     }
-
-    .page {
-      max-width: 980px;
-      margin: 0 auto;
-    }
-
+    .page { max-width: 980px; margin: 0 auto; }
     .header {
       position: relative;
       padding: 20px 24px;
@@ -54,23 +43,9 @@
       height: 48px;
       object-fit: contain;
     }
-
-    h1 {
-      margin: 0;
-      font-size: 24px;
-      letter-spacing: 0.02em;
-    }
-
-    .sub {
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .sub.spaced {
-      margin-bottom: 1em;
-    }
-
+    h1 { margin: 0; font-size: 24px; letter-spacing: 0.02em; }
+    .sub { margin-top: 4px; color: var(--muted); font-size: 13px; }
+    .sub.spaced { margin-bottom: 1em; }
     .auth {
       position: absolute;
       top: 18px;
@@ -81,11 +56,7 @@
       font-size: 13px;
       color: var(--muted);
     }
-
-    .auth strong {
-      color: var(--text);
-    }
-
+    .auth strong { color: var(--text); }
     .auth button {
       border: 1px solid var(--border);
       background: #fff;
@@ -107,10 +78,7 @@
       text-decoration: none;
       font-weight: 600;
     }
-    .breadcrumb-sep {
-      color: #9ca3af;
-    }
-
+    .breadcrumb-sep { color: #9ca3af; }
     .card {
       margin-top: 16px;
       background: var(--card);
@@ -119,27 +87,23 @@
       padding: 16px;
       box-shadow: 0 10px 24px rgba(31, 41, 55, 0.06);
     }
-
     .card h2 {
       margin: 0 0 12px;
       font-size: 16px;
       color: var(--text);
     }
-
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr 160px;
       gap: 12px;
       align-items: end;
     }
-
     label {
       font-size: 12px;
       color: var(--muted);
       display: block;
       margin-bottom: 4px;
     }
-
     input {
       width: 100%;
       padding: 10px 12px;
@@ -148,7 +112,6 @@
       font-size: 14px;
       background: #fff;
     }
-
     button.primary {
       background: var(--accent);
       color: #fff;
@@ -158,75 +121,28 @@
       cursor: pointer;
       font-weight: 600;
     }
-
-    button.ghost {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 8px 12px;
-      cursor: pointer;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th,
-    td {
-      border-bottom: 1px solid var(--border);
-      padding: 12px 10px;
-      text-align: left;
-      font-size: 14px;
-    }
-
-    th {
-      color: var(--muted);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      font-size: 11px;
-    }
-
-    tr:last-child td {
-      border-bottom: none;
-    }
-
-    .actions {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
     .alert {
       margin-top: 12px;
       padding: 10px 12px;
       border-radius: 10px;
       font-size: 13px;
     }
-
     .alert.success {
       background: rgba(16, 185, 129, 0.12);
       color: #0f766e;
       border: 1px solid rgba(16, 185, 129, 0.25);
     }
-
     .alert.error {
       background: rgba(239, 68, 68, 0.12);
       color: #b91c1c;
       border: 1px solid rgba(239, 68, 68, 0.25);
     }
-
     .hint {
       margin-top: 6px;
       color: var(--muted);
       font-size: 12px;
     }
-
-    .footer {
-      margin-top: 14px;
-    }
-
+    .footer { margin-top: 14px; }
     .footer a {
       color: var(--accent);
       text-decoration: none;
@@ -238,6 +154,7 @@
       .header-logo { width: 40px; height: 40px; }
       h1 { font-size: 22px; }
       .header .auth { max-width: 50%; }
+      .form-grid { grid-template-columns: 1fr 1fr; }
     }
     @media (max-width: 750px) {
       .header {
@@ -250,10 +167,10 @@
         justify-content: flex-start;
         max-width: 100%;
       }
+      .form-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
-
 <body>
   <div class="page">
     <div class="header">
@@ -287,7 +204,7 @@
 
     <div class="card">
       <h2>送信元設定</h2>
-      <div class="sub spaced">Gmail のアドレスとアプリパスワードを保存します。</div>
+      <div class="sub spaced">Gmail のアドレスとアプリパスワードを設定します。</div>
       <form th:action="@{/admin/mail-settings/save}" method="post">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <div class="form-grid">
@@ -307,7 +224,7 @@
             <button class="primary" type="submit">保存</button>
           </div>
         </div>
-        <div class="hint">※パスワード欄が空の場合は既存値を保持します。</div>
+        <div class="hint">パスワード欄が空の場合、既存設定を維持します。</div>
       </form>
     </div>
 
@@ -328,7 +245,7 @@
           </div>
         </div>
       </form>
-      <div class="hint">※開発環境ではログ出力で確認ができます。</div>
+      <div class="hint">実行結果は画面上部のメッセージで確認できます。</div>
     </div>
 
     <div class="footer">
@@ -336,5 +253,4 @@
     </div>
   </div>
 </body>
-
 </html>
