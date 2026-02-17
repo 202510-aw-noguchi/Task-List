@@ -64,6 +64,23 @@
       border-radius: 999px;
       cursor: pointer;
     }
+    .breadcrumbs {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .breadcrumbs a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .breadcrumb-sep {
+      color: #9ca3af;
+    }
     .card {
       margin-top: 16px;
       background: var(--card);
@@ -206,6 +223,16 @@
         </form>
       </div>
     </div>
+
+    <nav class="breadcrumbs" aria-label="breadcrumb">
+      <a th:href="@{/}">トップ</a>
+      <span class="breadcrumb-sep">/</span>
+      <a th:href="@{/admin}" th:text="#{action.adminPage}">管理画面</a>
+      <span class="breadcrumb-sep">/</span>
+      <a th:href="@{/admin/users}">ユーザー一覧</a>
+      <span class="breadcrumb-sep">/</span>
+      <span>ユーザー管理</span>
+    </nav>
 
     <div class="alert success" th:if="${message}" th:text="${message}">成功</div>
     <div class="alert error" th:if="${error}" th:text="${error}">エラー</div>
