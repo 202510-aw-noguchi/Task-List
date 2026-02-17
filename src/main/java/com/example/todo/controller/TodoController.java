@@ -36,6 +36,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.format.DateTimeFormatter;
 import java.time.YearMonth;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Locale;
 import com.example.todo.dto.MonthlyProgressSummary;
 
@@ -65,6 +66,8 @@ public class TodoController {
                         String dir,
                         @org.springframework.web.bind.annotation.RequestParam(name = "includeCompleted", required = false)
                         Boolean includeCompleted,
+                        @org.springframework.web.bind.annotation.RequestParam(name = "showAllCompleted", required = false)
+                        Boolean showAllCompleted,
                         @org.springframework.web.bind.annotation.RequestParam(name = "page", required = false)
                         Integer page,
                         Model model,
@@ -72,7 +75,7 @@ public class TodoController {
                         Authentication authentication) {
         Long userId = requireUserId(userDetails);
         Long scopeUserId = isAdmin(authentication) ? null : userId;
-        return renderIndex(keyword, categoryId, sort, dir, includeCompleted, page, model, scopeUserId, "index");
+        return renderIndex(keyword, categoryId, sort, dir, includeCompleted, showAllCompleted, page, model, scopeUserId, "index");
     }
 
     @GetMapping("/admin/todos")
@@ -90,7 +93,7 @@ public class TodoController {
                              @org.springframework.web.bind.annotation.RequestParam(name = "page", required = false)
                              Integer page,
                              Model model) {
-        return renderIndex(keyword, categoryId, sort, dir, includeCompleted, page, model, null, "admin/todos");
+        return renderIndex(keyword, categoryId, sort, dir, includeCompleted, null, page, model, null, "admin/todos");
     }
 
     @GetMapping("/create")
@@ -303,6 +306,21 @@ public class TodoController {
         return "redirect:" + resolveReturnTo(returnTo);
     }
 
+    @PostMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN') or @todoService.isOwner(#p0, authentication.name)")
+    public ResponseEntity<Void> updateStatus(@PathVariable("id") Long id,
+                                             @RequestParam("status") Status status,
+                                             @AuthenticationPrincipal UserDetails userDetails,
+                                             Authentication authentication) {
+        Long userId = requireUserId(userDetails);
+        Long scopeUserId = isAdmin(authentication) ? null : userId;
+        boolean updated = todoService.updateStatus(id, status, scopeUserId);
+        if (!updated) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/delete")
     @PreAuthorize("hasRole('ADMIN')")
     public String deleteSelected(@RequestParam(name = "ids", required = false) java.util.List<Long> ids,
@@ -388,14 +406,15 @@ public class TodoController {
     }
 
     private String renderIndex(String keyword, Long categoryId, String sort, String dir, Boolean includeCompleted,
-                               Integer page, Model model,
+                               Boolean showAllCompleted, Integer page, Model model,
                                Long userId, String viewName) {
         String normalizedSort = (sort == null || sort.isBlank()) ? "createdAt" : sort;
         String normalizedDir = (dir == null || dir.isBlank()) ? "desc" : dir;
-        boolean showCompleted = includeCompleted != null && includeCompleted;
-        int size = 10;
+        boolean showCompleted = includeCompleted != null ? includeCompleted : "index".equals(viewName);
+        boolean showAllCompletedCards = showAllCompleted != null && showAllCompleted;
         int currentPage = (page == null || page < 1) ? 1 : page;
         long totalCount = todoService.countAll(keyword, categoryId, userId, showCompleted);
+        int size = "index".equals(viewName) ? (int) Math.max(1L, Math.min(totalCount, Integer.MAX_VALUE)) : 10;
         int totalPages = (int) Math.max(1, (totalCount + size - 1) / size);
         if (currentPage > totalPages) {
             currentPage = totalPages;
@@ -405,6 +424,19 @@ public class TodoController {
         java.util.List<Todo> todos =
                 todoService.findAllSorted(keyword, categoryId, userId, showCompleted,
                         normalizedSort, normalizedDir, size, offset);
+        if ("index".equals(viewName) && !showAllCompletedCards) {
+            LocalDateTime cutoff = LocalDateTime.now().minusWeeks(2);
+            todos = todos.stream()
+                    .filter(todo -> {
+                        Status status = todo.getStatus() == null ? Status.NOT_STARTED : todo.getStatus();
+                        if (status != Status.COMPLETED) {
+                            return true;
+                        }
+                        LocalDateTime updatedAt = todo.getUpdatedAt();
+                        return updatedAt == null || !updatedAt.isBefore(cutoff);
+                    })
+                    .toList();
+        }
         model.addAttribute("todos", todos);
         java.util.List<Long> todoIds = todos.stream()
                 .map(Todo::getId)
@@ -419,6 +451,7 @@ public class TodoController {
         model.addAttribute("sort", normalizedSort);
         model.addAttribute("dir", normalizedDir);
         model.addAttribute("includeCompleted", showCompleted);
+        model.addAttribute("showAllCompletedCards", showAllCompletedCards);
         model.addAttribute("page", currentPage);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("totalCount", totalCount);

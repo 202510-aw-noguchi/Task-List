@@ -148,6 +148,17 @@ public class TodoService {
         return true;
     }
 
+    public boolean updateStatus(Long id, Status status, Long userId) {
+        Todo todo = findById(id, userId);
+        if (todo == null) {
+            return false;
+        }
+        todo.setStatus(status == null ? Status.NOT_STARTED : status);
+        todo.setUpdatedAt(LocalDateTime.now());
+        todoRepository.save(todo);
+        return true;
+    }
+
     @Transactional
     public int deleteByIds(List<Long> ids, Long userId) {
         return todoMapper.deleteByIds(ids, userId);
