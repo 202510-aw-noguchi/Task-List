@@ -428,13 +428,14 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      min-height: 34px;
+      height: 44px;
       margin: -10px -10px 0;
       padding: 6px 8px;
       border-radius: 4px 4px 0 0;
       font-size: 13px;
       font-weight: 700;
       color: #fff;
+      overflow: hidden;
     }
     .board-header-title {
       display: inline-flex;
@@ -621,16 +622,96 @@
         grid-template-columns: 1fr;
         row-gap: 10px;
       }
+      .header-title {
+        justify-content: center;
+        text-align: center;
+      }
       .header .auth {
         position: static;
-        justify-content: flex-start;
+        justify-content: center;
         max-width: 100%;
+      }
+      .lang {
+        position: static;
+        justify-content: center;
+      }
+      .shortcut-row,
+      .quick-links,
+      .admin-link {
+        justify-content: center;
       }
       .info-section {
         grid-template-columns: 1fr;
+        width: 100%;
+        max-width: 360px;
+        margin: 0 auto;
+      }
+      .info-wrap {
+        justify-content: center;
+      }
+      .weather-card,
+      .fx-card,
+      .progress-card {
+        text-align: center;
+      }
+      .weather-meta,
+      .weather-values,
+      .fx-meta,
+      .fx-values {
+        justify-content: center;
+      }
+      .weather-values,
+      .fx-values {
+        place-items: center;
+      }
+      .weather-values.one-row {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+      }
+      .weather-icon-wrap {
+        justify-content: center;
+      }
+      .progress-content {
+        justify-content: center;
+        gap: 14px;
+      }
+      .progress-left {
+        align-items: center;
+      }
+      .progress-stats {
+        justify-items: center;
       }
       .board {
         grid-template-columns: 1fr;
+      }
+      .board-header {
+        justify-content: center;
+        gap: 10px;
+      }
+      .card-actions {
+        position: static;
+        justify-content: center;
+        margin-bottom: 8px;
+      }
+      .filters {
+        clear: both;
+        justify-content: center;
+        flex-wrap: nowrap;
+        align-items: center;
+      }
+      .filters input[name="keyword"] {
+        flex: 1 1 auto;
+        min-width: 0;
+        max-width: 220px;
+      }
+      .filters select {
+        flex: 0 0 110px;
+        width: 110px;
+      }
+      .filters button.action-button {
+        flex: 0 0 auto;
+      }
+      .filters a.action-button {
+        flex: 0 0 auto;
       }
     }
   </style>
