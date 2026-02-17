@@ -69,6 +69,12 @@
     }
     .message.error { background: #ffe5e5; border-color: #f0b4b4; }
     .message.info { background: #eef2ff; border-color: #c7d2fe; }
+    .forgot-password-note {
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -85,7 +91,6 @@
       <div class="message info" th:if="${param.logout}" th:text="#{message.logout}">
         Logged out.
       </div>
-
       <form th:action="@{/login}" method="post">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <label>
@@ -99,6 +104,9 @@
         <button type="submit" th:text="#{action.login}">Login</button>
       </form>
     </div>
+    <p class="forgot-password-note" th:text="#{message.forgotPasswordInfo}">
+      パスワードを忘れた場合は管理者へ連絡してください。
+    </p>
   </div>
 </body>
 </html>
