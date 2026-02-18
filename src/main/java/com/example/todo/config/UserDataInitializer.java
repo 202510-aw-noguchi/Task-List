@@ -12,17 +12,30 @@ public class UserDataInitializer {
     @Bean
     CommandLineRunner initUsers(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
-            AppUser admin = userRepository.findByUsername("admin").orElseGet(AppUser::new);
-            admin.setUsername("admin");
-            admin.setPassword(passwordEncoder.encode("password"));
-            admin.setRole("ROLE_ADMIN");
-            userRepository.save(admin);
-
-            AppUser user = userRepository.findByUsername("user").orElseGet(AppUser::new);
-            user.setUsername("user");
-            user.setPassword(passwordEncoder.encode("password"));
-            user.setRole("ROLE_USER");
-            userRepository.save(user);
+            upsertSeedUser(userRepository, passwordEncoder,
+                    "admin", "password", "ROLE_ADMIN", "admin@example.com");
+            upsertSeedUser(userRepository, passwordEncoder,
+                    "User_A", "password", "ROLE_USER", "user_a@example.com");
+            upsertSeedUser(userRepository, passwordEncoder,
+                    "User_B", "password", "ROLE_USER", "user_b@example.com");
+            upsertSeedUser(userRepository, passwordEncoder,
+                    "User_C", "password", "ROLE_USER", "user_c@example.com");
         };
+    }
+
+    private void upsertSeedUser(UserRepository userRepository,
+                                PasswordEncoder passwordEncoder,
+                                String username,
+                                String rawPassword,
+                                String role,
+                                String email) {
+        AppUser user = userRepository.findByUsername(username).orElseGet(AppUser::new);
+        user.setUsername(username);
+        user.setPassword(passwordEncoder.encode(rawPassword));
+        user.setRole(role);
+        user.setEmail(email);
+        user.setPasswordResetRequired(false);
+        user.setPasswordResetIssuedAt(null);
+        userRepository.save(user);
     }
 }

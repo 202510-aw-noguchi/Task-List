@@ -1,12 +1,16 @@
-﻿package com.example.todo.controller;
+package com.example.todo.controller;
 
 import com.example.todo.entity.AppUser;
 import com.example.todo.repository.TodoRepository;
 import com.example.todo.repository.UserRepository;
+import com.example.todo.service.MailService;
 import java.security.Principal;
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -20,16 +24,29 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/admin/users/manage")
 public class AdminUserController {
+    private static final String OTP_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+    private static final int OTP_LENGTH = 12;
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+
     private final UserRepository userRepository;
     private final TodoRepository todoRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MailService mailService;
+    private final String appBaseUrl;
+    private final boolean mailDryRun;
 
     public AdminUserController(UserRepository userRepository,
                                TodoRepository todoRepository,
-                               PasswordEncoder passwordEncoder) {
+                               PasswordEncoder passwordEncoder,
+                               MailService mailService,
+                               @Value("${app.base-url:http://localhost:8080}") String appBaseUrl,
+                               @Value("${app.mail.dry-run:false}") boolean mailDryRun) {
         this.userRepository = userRepository;
         this.todoRepository = todoRepository;
         this.passwordEncoder = passwordEncoder;
+        this.mailService = mailService;
+        this.appBaseUrl = trimTrailingSlash(appBaseUrl);
+        this.mailDryRun = mailDryRun;
     }
 
     @GetMapping
@@ -118,6 +135,65 @@ public class AdminUserController {
         return "redirect:/admin/users/manage";
     }
 
+    @PostMapping("/reset-password")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String reissuePassword(@RequestParam("userId") Long userId,
+                                  RedirectAttributes redirectAttributes) {
+        Optional<AppUser> userOpt = userRepository.findById(userId);
+        if (userOpt.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "ユーザーが見つかりません。");
+            return "redirect:/admin/users/manage";
+        }
+
+        AppUser user = userOpt.get();
+        String to = user.getEmail() == null ? "" : user.getEmail().trim();
+        if (to.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "メールアドレス未設定のため再発行できません。");
+            return "redirect:/admin/users/manage";
+        }
+
+        String previousPassword = user.getPassword();
+        boolean previousRequired = user.isPasswordResetRequired();
+        LocalDateTime previousIssuedAt = user.getPasswordResetIssuedAt();
+        String oneTimePassword = generateOneTimePassword();
+        user.setPassword(passwordEncoder.encode(oneTimePassword));
+        user.setPasswordResetRequired(true);
+        user.setPasswordResetIssuedAt(LocalDateTime.now());
+        userRepository.save(user);
+
+        String loginUrl = appBaseUrl + "/login";
+        String resetUrl = appBaseUrl + "/password/reset";
+        String subject = "[Todo] ワンタイムパスワード再発行のお知らせ";
+        String body = """
+                ToDoシステムのワンタイムパスワードを発行しました。
+                                
+                ユーザーID: %s
+                ワンタイムパスワード: %s
+                                
+                ログインURL: %s
+                ※ログイン後はパスワード再設定画面へ自動遷移します。
+                参考URL: %s
+                """.formatted(user.getUsername(), oneTimePassword, loginUrl, resetUrl);
+
+        try {
+            mailService.sendTextMail(to, subject, body);
+        } catch (Exception ex) {
+            user.setPassword(previousPassword);
+            user.setPasswordResetRequired(previousRequired);
+            user.setPasswordResetIssuedAt(previousIssuedAt);
+            userRepository.save(user);
+            redirectAttributes.addFlashAttribute("error", "ワンタイムパスワードのメール送信に失敗しました。");
+            return "redirect:/admin/users/manage";
+        }
+
+        String message = "ユーザー " + user.getUsername() + " のワンタイムパスワードを再発行し、メール送信しました。";
+        if (mailDryRun) {
+            message += "（dry-run のため画面表示）OTP: " + oneTimePassword;
+        }
+        redirectAttributes.addFlashAttribute("message", message);
+        return "redirect:/admin/users/manage";
+    }
+
     private String normalizeRole(String role) {
         if (role == null) {
             return "ROLE_USER";
@@ -127,5 +203,25 @@ public class AdminUserController {
             return "ROLE_ADMIN";
         }
         return "ROLE_USER";
+    }
+
+    private String generateOneTimePassword() {
+        StringBuilder builder = new StringBuilder(OTP_LENGTH);
+        for (int i = 0; i < OTP_LENGTH; i++) {
+            int index = SECURE_RANDOM.nextInt(OTP_CHARS.length());
+            builder.append(OTP_CHARS.charAt(index));
+        }
+        return builder.toString();
+    }
+
+    private String trimTrailingSlash(String baseUrl) {
+        if (baseUrl == null || baseUrl.isBlank()) {
+            return "http://localhost:8080";
+        }
+        String value = baseUrl.trim();
+        while (value.endsWith("/")) {
+            value = value.substring(0, value.length() - 1);
+        }
+        return value;
     }
 }

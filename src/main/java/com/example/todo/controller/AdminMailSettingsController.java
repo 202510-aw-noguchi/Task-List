@@ -1,4 +1,4 @@
-﻿package com.example.todo.controller;
+package com.example.todo.controller;
 
 import com.example.todo.entity.MailSettings;
 import com.example.todo.service.MailService;

@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
@@ -25,6 +26,12 @@ public class AppUser {
 
     @Column
     private String email;
+
+    @Column(nullable = false)
+    private boolean passwordResetRequired = false;
+
+    @Column
+    private LocalDateTime passwordResetIssuedAt;
 
     public Long getId() {
         return id;
@@ -64,5 +71,21 @@ public class AppUser {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public boolean isPasswordResetRequired() {
+        return passwordResetRequired;
+    }
+
+    public void setPasswordResetRequired(boolean passwordResetRequired) {
+        this.passwordResetRequired = passwordResetRequired;
+    }
+
+    public LocalDateTime getPasswordResetIssuedAt() {
+        return passwordResetIssuedAt;
+    }
+
+    public void setPasswordResetIssuedAt(LocalDateTime passwordResetIssuedAt) {
+        this.passwordResetIssuedAt = passwordResetIssuedAt;
     }
 }

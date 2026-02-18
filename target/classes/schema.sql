@@ -9,7 +9,9 @@ CREATE TABLE users (
   username VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
   role VARCHAR(50) NOT NULL,
-  email VARCHAR(255)
+  email VARCHAR(255),
+  password_reset_required BOOLEAN NOT NULL DEFAULT FALSE,
+  password_reset_issued_at TIMESTAMP
 );
 
 CREATE TABLE mail_settings (
