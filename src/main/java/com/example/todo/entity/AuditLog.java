@@ -10,7 +10,7 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "audit_log")
+@Table(name = "audit_logs")
 public class AuditLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,14 +19,23 @@ public class AuditLog {
     @Column(nullable = false, length = 30)
     private String action;
 
-    @Column(length = 500)
-    private String message;
+    @Column(name = "entity_type", nullable = false, length = 50)
+    private String entityType;
 
-    @Column(name = "todo_id")
-    private Long todoId;
+    @Column(name = "entity_id")
+    private Long entityId;
 
     @Column(name = "user_id")
     private Long userId;
+
+    @Column(name = "old_value", columnDefinition = "CLOB")
+    private String oldValue;
+
+    @Column(name = "new_value", columnDefinition = "CLOB")
+    private String newValue;
+
+    @Column(name = "ip_address", length = 64)
+    private String ipAddress;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -54,20 +63,20 @@ public class AuditLog {
         this.action = action;
     }
 
-    public String getMessage() {
-        return message;
+    public String getEntityType() {
+        return entityType;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setEntityType(String entityType) {
+        this.entityType = entityType;
     }
 
-    public Long getTodoId() {
-        return todoId;
+    public Long getEntityId() {
+        return entityId;
     }
 
-    public void setTodoId(Long todoId) {
-        this.todoId = todoId;
+    public void setEntityId(Long entityId) {
+        this.entityId = entityId;
     }
 
     public Long getUserId() {
@@ -76,6 +85,30 @@ public class AuditLog {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getOldValue() {
+        return oldValue;
+    }
+
+    public void setOldValue(String oldValue) {
+        this.oldValue = oldValue;
+    }
+
+    public String getNewValue() {
+        return newValue;
+    }
+
+    public void setNewValue(String newValue) {
+        this.newValue = newValue;
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
     }
 
     public LocalDateTime getCreatedAt() {

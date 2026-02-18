@@ -8,6 +8,7 @@ import com.example.todo.entity.TodoHistory;
 import com.example.todo.exception.BusinessException;
 import com.example.todo.dto.MonthlyProgressSummary;
 import com.example.todo.form.TodoForm;
+import com.example.todo.audit.Auditable;
 import com.example.todo.mapper.TodoMapper;
 import com.example.todo.repository.CategoryRepository;
 import com.example.todo.repository.TodoRepository;
@@ -27,23 +28,22 @@ public class TodoService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final TodoHistoryRepository todoHistoryRepository;
-    private final AuditService auditService;
     private final AsyncTaskService asyncTaskService;
 
     public TodoService(TodoRepository todoRepository, TodoMapper todoMapper,
                        CategoryRepository categoryRepository, UserRepository userRepository,
-                       TodoHistoryRepository todoHistoryRepository, AuditService auditService,
+                       TodoHistoryRepository todoHistoryRepository,
                        AsyncTaskService asyncTaskService) {
         this.todoRepository = todoRepository;
         this.todoMapper = todoMapper;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.todoHistoryRepository = todoHistoryRepository;
-        this.auditService = auditService;
         this.asyncTaskService = asyncTaskService;
     }
 
     @Transactional(rollbackFor = Exception.class, noRollbackFor = BusinessException.class)
+    @Auditable(action = "CREATE", entityType = "Todo", entityIdExpression = "#result.id")
     public Todo save(TodoForm form, Long userId) {
         LocalDateTime now = LocalDateTime.now();
         Todo todo = new Todo();
@@ -67,7 +67,6 @@ public class TodoService {
         history.setDetail(saved.getTitle());
         todoHistoryRepository.save(history);
 
-        auditService.record("CREATE", "Todo created", saved.getId(), userId);
         asyncTaskService.sendEmail(saved.getId());
 
         return saved;
@@ -107,6 +106,7 @@ public class TodoService {
         return todoRepository.findByIdAndUser_Id(id, userId).orElse(null);
     }
 
+    @Auditable(action = "UPDATE", entityType = "Todo", entityIdExpression = "#form.id")
     public Todo update(TodoForm form, Long userId) {
         Todo todo = findById(form.getId(), userId);
         if (todo == null) {
@@ -128,6 +128,7 @@ public class TodoService {
     }
 
     @Transactional
+    @Auditable(action = "DELETE", entityType = "Todo", entityIdExpression = "#id")
     public void delete(Long id, Long userId) {
         if (userId == null) {
             todoRepository.deleteById(id);
@@ -136,6 +137,7 @@ public class TodoService {
         todoRepository.deleteByIdAndUser_Id(id, userId);
     }
 
+    @Auditable(action = "ADVANCE_STATUS", entityType = "Todo", entityIdExpression = "#id")
     public boolean advanceStatus(Long id, Long userId) {
         Todo todo = findById(id, userId);
         if (todo == null) {
@@ -148,6 +150,7 @@ public class TodoService {
         return true;
     }
 
+    @Auditable(action = "SET_STATUS", entityType = "Todo", entityIdExpression = "#id")
     public boolean updateStatus(Long id, Status status, Long userId) {
         Todo todo = findById(id, userId);
         if (todo == null) {
@@ -160,6 +163,7 @@ public class TodoService {
     }
 
     @Transactional
+    @Auditable(action = "BULK_DELETE", entityType = "Todo")
     public int deleteByIds(List<Long> ids, Long userId) {
         return todoMapper.deleteByIds(ids, userId);
     }

@@ -9,6 +9,7 @@ import com.example.todo.repository.CategoryRepository;
 import com.example.todo.service.TodoAttachmentService;
 import com.example.todo.service.TodoService;
 import com.example.todo.service.AsyncTaskService;
+import com.example.todo.aop.AopTraceStore;
 import java.io.IOException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -46,13 +47,16 @@ public class TodoController {
     private final CategoryRepository categoryRepository;
     private final TodoAttachmentService todoAttachmentService;
     private final AsyncTaskService asyncTaskService;
+    private final AopTraceStore aopTraceStore;
 
     public TodoController(TodoService todoService, CategoryRepository categoryRepository,
-                          TodoAttachmentService todoAttachmentService, AsyncTaskService asyncTaskService) {
+                          TodoAttachmentService todoAttachmentService, AsyncTaskService asyncTaskService,
+                          AopTraceStore aopTraceStore) {
         this.todoService = todoService;
         this.categoryRepository = categoryRepository;
         this.todoAttachmentService = todoAttachmentService;
         this.asyncTaskService = asyncTaskService;
+        this.aopTraceStore = aopTraceStore;
     }
 
     @GetMapping("/")
@@ -506,16 +510,18 @@ public class TodoController {
 
     @GetMapping("/admin/report")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> generateReport(@AuthenticationPrincipal UserDetails userDetails) {
+    public String generateReport(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         Long userId = requireUserId(userDetails);
         try {
             java.util.concurrent.CompletableFuture<String> future = asyncTaskService.generateReport(userId);
             String result = future.get(2, java.util.concurrent.TimeUnit.SECONDS);
-            return ResponseEntity.ok(result);
+            model.addAttribute("reportResult", result);
         } catch (java.util.concurrent.TimeoutException ex) {
-            return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body("Report generation timed out");
+            model.addAttribute("reportError", "Report generation timed out");
         } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Report generation failed");
+            model.addAttribute("reportError", "Report generation failed");
         }
+        model.addAttribute("aopLogs", aopTraceStore.getRecent());
+        return "admin/report";
     }
 }

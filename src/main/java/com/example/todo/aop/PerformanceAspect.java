@@ -12,6 +12,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class PerformanceAspect {
     private static final Logger logger = LoggerFactory.getLogger(PerformanceAspect.class);
+    private final AopTraceStore aopTraceStore;
+
+    public PerformanceAspect(AopTraceStore aopTraceStore) {
+        this.aopTraceStore = aopTraceStore;
+    }
 
     @Pointcut("execution(* com.example.todo.service.*.*(..))")
     public void serviceMethods() {
@@ -26,6 +31,7 @@ public class PerformanceAspect {
             long elapsed = System.currentTimeMillis() - start;
             String method = joinPoint.getSignature().getName();
             logger.info("Performance {} took {} ms", method, elapsed);
+            aopTraceStore.addInfo(method, "Performance took " + elapsed + " ms");
         }
     }
 }

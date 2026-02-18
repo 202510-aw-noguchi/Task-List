@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="UTF-8" />
@@ -59,7 +59,7 @@
       border: 1px solid var(--border);
       background: #fff;
       padding: 4px 10px;
-      border-radius: 999px;
+      border-radius: 10px;
       cursor: pointer;
     }
     .breadcrumbs {
@@ -81,7 +81,7 @@
       margin-top: 16px;
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 16px;
+      border-radius: 10px;
       padding: 16px;
     }
     .card h2 {
@@ -104,7 +104,7 @@
     input {
       width: 100%;
       padding: 10px 12px;
-      border-radius: 10px;
+      border-radius: 6px;
       border: 1px solid var(--border);
       font-size: 14px;
       background: #fff;
@@ -113,7 +113,7 @@
       background: var(--accent);
       color: #fff;
       border: none;
-      border-radius: 10px;
+      border-radius: 6px;
       padding: 10px 14px;
       cursor: pointer;
       font-weight: 600;
@@ -121,7 +121,7 @@
     .alert {
       margin-top: 12px;
       padding: 10px 12px;
-      border-radius: 10px;
+      border-radius: 6px;
       font-size: 13px;
     }
     .alert.success {
@@ -245,9 +245,6 @@
       <div class="hint">実行結果は画面上部のメッセージで確認できます。</div>
     </div>
 
-    <div class="footer">
-      <a th:href="@{/admin}">管理トップへ戻る</a>
-    </div>
   </div>
 </body>
 </html>

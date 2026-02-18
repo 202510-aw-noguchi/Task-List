@@ -53,6 +53,7 @@ public class PasswordResetEnforcementFilter extends OncePerRequestFilter {
     private boolean isExcludedPath(String path) {
         return path.startsWith("/login")
                 || path.startsWith("/logout")
+                || path.startsWith("/password/reissue")
                 || path.startsWith("/password/reset")
                 || path.startsWith("/css/")
                 || path.startsWith("/js/")

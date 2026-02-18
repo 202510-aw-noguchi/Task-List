@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="UTF-8" />
@@ -58,7 +58,7 @@
       border: 1px solid var(--border);
       background: #fff;
       padding: 4px 10px;
-      border-radius: 999px;
+      border-radius: 10px;
       cursor: pointer;
     }
     .breadcrumbs {
@@ -79,7 +79,7 @@
     .alert {
       margin-top: 12px;
       padding: 10px 12px;
-      border-radius: 10px;
+      border-radius: 6px;
       font-size: 13px;
     }
     .alert.success {
@@ -96,7 +96,7 @@
       margin-top: 16px;
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 16px;
+      border-radius: 10px;
       padding: 16px;
     }
     .card h2 {
@@ -119,7 +119,7 @@
     input, select {
       width: 100%;
       padding: 10px 12px;
-      border-radius: 10px;
+      border-radius: 6px;
       border: 1px solid var(--border);
       font-size: 14px;
       background: #fff;
@@ -128,7 +128,7 @@
       background: var(--accent);
       color: #fff;
       border: none;
-      border-radius: 10px;
+      border-radius: 6px;
       padding: 10px 14px;
       cursor: pointer;
       font-weight: 600;
@@ -136,7 +136,7 @@
     button.ghost {
       background: #fff;
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: 6px;
       padding: 8px 12px;
       cursor: pointer;
     }
@@ -144,7 +144,7 @@
       background: var(--danger);
       color: #fff;
       border: none;
-      border-radius: 10px;
+      border-radius: 6px;
       padding: 8px 12px;
       cursor: pointer;
     }
@@ -175,7 +175,7 @@
       background: #f59e0b;
       color: #fff;
       border: none;
-      border-radius: 10px;
+      border-radius: 6px;
       padding: 8px 12px;
       cursor: pointer;
       font-weight: 600;
@@ -186,7 +186,7 @@
       color: #b45309;
       background: #fef3c7;
       border: 1px solid #fcd34d;
-      border-radius: 999px;
+      border-radius: 10px;
       padding: 3px 8px;
       margin-left: 8px;
     }
@@ -347,9 +347,6 @@
       </table>
     </div>
 
-    <div class="footer">
-      <a th:href="@{/admin/users}">ユーザー一覧へ戻る</a>
-    </div>
   </div>
 </body>
 </html>

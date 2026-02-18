@@ -15,6 +15,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class LoggingAspect {
     private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
+    private final AopTraceStore aopTraceStore;
+
+    public LoggingAspect(AopTraceStore aopTraceStore) {
+        this.aopTraceStore = aopTraceStore;
+    }
 
     @Pointcut("execution(* com.example.todo.service.*.*(..))")
     public void serviceMethods() {
@@ -25,17 +30,20 @@ public class LoggingAspect {
         String method = joinPoint.getSignature().getName();
         String args = Arrays.toString(joinPoint.getArgs());
         logger.info("Before {} args={}", method, args);
+        aopTraceStore.addInfo(method, "Before args=" + args);
     }
 
     @AfterReturning(pointcut = "serviceMethods()", returning = "result")
     public void logAfterReturning(JoinPoint joinPoint, Object result) {
         String method = joinPoint.getSignature().getName();
         logger.info("After {} result={}", method, result);
+        aopTraceStore.addInfo(method, "After result=" + String.valueOf(result));
     }
 
     @AfterThrowing(pointcut = "serviceMethods()", throwing = "ex")
     public void logAfterThrowing(JoinPoint joinPoint, Throwable ex) {
         String method = joinPoint.getSignature().getName();
         logger.error("Error {} message={}", method, ex.getMessage());
+        aopTraceStore.addError(method, "Error message=" + ex.getMessage());
     }
 }

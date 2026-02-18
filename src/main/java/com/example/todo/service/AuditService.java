@@ -15,12 +15,26 @@ public class AuditService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void record(String action, String message, Long todoId, Long userId) {
+    public void record(String action,
+                       String entityType,
+                       Long entityId,
+                       Long userId,
+                       String oldValue,
+                       String newValue,
+                       String ipAddress) {
         AuditLog log = new AuditLog();
         log.setAction(action);
-        log.setMessage(message);
-        log.setTodoId(todoId);
+        log.setEntityType(entityType);
+        log.setEntityId(entityId);
         log.setUserId(userId);
+        log.setOldValue(oldValue);
+        log.setNewValue(newValue);
+        log.setIpAddress(ipAddress);
         auditLogRepository.save(log);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void record(String action, String message, Long todoId, Long userId) {
+        record(action, "Todo", todoId, userId, message, null, null);
     }
 }

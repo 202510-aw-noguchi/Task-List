@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="UTF-8" />
@@ -65,7 +65,7 @@
       border: 1px solid var(--border);
       background: #fff;
       padding: 4px 10px;
-      border-radius: 999px;
+      border-radius: 10px;
       cursor: pointer;
     }
     .breadcrumbs {
@@ -87,7 +87,7 @@
       margin-top: 16px;
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 16px;
+      border-radius: 10px;
       padding: 16px;
     }
     table {
@@ -124,7 +124,7 @@
       background: var(--accent-weak);
       color: var(--accent);
       padding: 6px 10px;
-      border-radius: 999px;
+      border-radius: 10px;
       text-decoration: none;
       font-weight: 600;
       font-size: 12px;
@@ -207,9 +207,6 @@
       </table>
     </div>
 
-    <div class="footer">
-      <a th:href="@{/admin}">管理トップへ戻る</a>
-    </div>
   </div>
 </body>
 </html>
