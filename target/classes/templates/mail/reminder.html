@@ -1,30 +1,31 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ja">
   <head>
     <meta charset="UTF-8" />
-    <title th:text="${appName} + ' 期限リマインダー'">Todo Reminder</title>
+    <title th:text="${appName} + ' 譛滄剞繝ｪ繝槭う繝ｳ繝繝ｼ'">Todo Reminder</title>
   </head>
   <body style="font-family: Arial, sans-serif; line-height: 1.6;">
-    <h2 th:text="${appName} + ' 期限リマインダー'">Todo Reminder</h2>
-    <p>以下のタスクが本日期限です。</p>
+    <h2 th:text="${appName} + ' 譛滄剞繝ｪ繝槭う繝ｳ繝繝ｼ'">Todo Reminder</h2>
+    <p>莉･荳九・繧ｿ繧ｹ繧ｯ縺梧悽譌･譛滄剞縺ｧ縺吶・/p>
     <table cellpadding="6" cellspacing="0" border="1" style="border-collapse: collapse;">
       <tr>
-        <th align="left">タイトル</th>
-        <td th:text="${title}">タイトル</td>
+        <th align="left">繧ｿ繧､繝医Ν</th>
+        <td th:text="${title}">繧ｿ繧､繝医Ν</td>
       </tr>
       <tr>
-        <th align="left">期限</th>
+        <th align="left">譛滄剞</th>
         <td th:text="${deadline}">2026/02/09</td>
       </tr>
       <tr>
-        <th align="left">優先度</th>
+        <th align="left">蜆ｪ蜈亥ｺｦ</th>
         <td th:text="${priority}">MEDIUM</td>
       </tr>
       <tr>
-        <th align="left">詳細</th>
-        <td th:text="${detail}">詳細</td>
+        <th align="left">隧ｳ邏ｰ</th>
+        <td th:text="${detail}">隧ｳ邏ｰ</td>
       </tr>
     </table>
-    <p>Todoアプリで進捗を確認してください。</p>
+    <p>Todo繧｢繝励Μ縺ｧ騾ｲ謐励ｒ遒ｺ隱阪＠縺ｦ縺上□縺輔＞縲・/p>
   </body>
 </html>
+
