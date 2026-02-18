@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
   <title th:text="#{gantt.title}">リソースレベリング</title>
   <style>
     :root {
@@ -247,6 +248,30 @@
     .priority-high { background: var(--danger-weak); color: var(--danger); }
     .priority-medium { background: var(--warn-weak); color: var(--warn); }
     .priority-low { background: var(--ok-weak); color: var(--ok); }
+    .material-symbols-outlined {
+      font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+    }
+    .warning-skull {
+      font-size: 14px;
+      color: #b00020;
+      display: block;
+      margin-top: 2px;
+      line-height: 1;
+    }
+    .warning-skull.placeholder {
+      visibility: hidden;
+    }
+    .daily-total-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 30px;
+      line-height: 1.1;
+    }
+    .daily-total-value {
+      display: block;
+    }
 
     @media (max-width: 1025px) {
       .header {
@@ -553,7 +578,13 @@
                   }
                 });
                 const todayClass = d === todayStr ? "today" : "";
-                return total > 0 ? `<td class="${todayClass}">${total}</td>` : `<td class="${todayClass}"></td>`;
+                if (total <= 0) {
+                  return `<td class="${todayClass}"></td>`;
+                }
+                const skull = total >= 5
+                  ? `<span class="material-symbols-outlined warning-skull" title="負荷高">skull</span>`
+                  : `<span class="material-symbols-outlined warning-skull placeholder">skull</span>`;
+                return `<td class="${todayClass}"><div class="daily-total-cell"><span class="daily-total-value">${total}</span>${skull}</div></td>`;
               }).join("")}
             </tr>
           </tbody>
