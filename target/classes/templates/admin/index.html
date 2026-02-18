@@ -76,21 +76,22 @@
     }
     .material-symbols-outlined {
       font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
-      font-size: clamp(28px, 7vw, 88px);
+      font-size: 78px;
       line-height: 1;
     }
     .menu-grid {
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(4, minmax(0, 190px));
+      justify-content: center;
+      gap: 14px;
     }
     .menu-tile {
-      display: grid;
-      grid-template-rows: auto 1fr;
-      align-items: start;
-      justify-items: center;
-      gap: 12px;
-      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 14px;
       border: 1px solid var(--border);
       border-radius: 8px;
       background: #fff;
@@ -107,8 +108,8 @@
       border-color: #bfd0f3;
     }
     .menu-icon {
-      width: clamp(36px, 9vw, 108px);
-      height: clamp(36px, 9vw, 108px);
+      width: 94px;
+      height: 94px;
       border-radius: 6px;
       background: transparent;
       color: #6b7280;
@@ -123,19 +124,25 @@
       flex-direction: column;
       gap: 3px;
       text-align: center;
-      font-size: clamp(10px, 2.1vw, 16px);
+      font-size: 15px;
       width: 100%;
-      align-self: start;
-      min-height: 52px;
-      justify-content: flex-start;
+      align-self: center;
+      min-height: 0;
+      justify-content: center;
+    }
+    .menu-label > span {
+      display: block;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
     .menu-label .ja-small {
-      font-size: clamp(8px, 1.4vw, 11px);
+      font-size: 11px;
       line-height: 1.2;
     }
     .menu-label .en {
       color: var(--muted);
-      font-size: clamp(9px, 1.7vw, 12px);
+      font-size: 13px;
       line-height: 1.2;
       min-height: 16px;
     }
@@ -151,10 +158,28 @@
         grid-template-columns: 1fr;
         row-gap: 10px;
       }
+      .menu-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
       .header .auth {
         position: static;
         justify-content: flex-start;
         max-width: 100%;
+      }
+      .menu-tile {
+        padding: 10px;
+        gap: 10px;
+      }
+      .menu-label {
+        font-size: 13px;
+      }
+      .menu-label .en {
+        font-size: 11px;
+      }
+    }
+    @media (max-width: 560px) {
+      .menu-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
   </style>
@@ -213,7 +238,7 @@
         </a>
         <a class="menu-tile" th:href="@{/admin/mail-settings}">
           <span class="menu-icon"><span class="material-symbols-outlined">mail</span></span>
-          <span class="menu-label"><span>リマインダー設定</span><span class="en">Reminder Sender Settings</span></span>
+          <span class="menu-label"><span>リマインダー設定</span><span class="en">Reminder Settings</span></span>
         </a>
         <a class="menu-tile" th:href="@{/h2-console}" target="_blank" rel="noopener">
           <span class="menu-icon"><span class="material-symbols-outlined">database</span></span>
@@ -221,7 +246,7 @@
         </a>
         <a class="menu-tile" th:href="@{/export/csv}">
           <span class="menu-icon"><span class="material-symbols-outlined">download</span></span>
-          <span class="menu-label"><span>CSV出力</span><span class="en">Download CSV</span></span>
+          <span class="menu-label"><span>CSV出力</span><span class="en">CSV Export</span></span>
         </a>
       </div>
     </div>
