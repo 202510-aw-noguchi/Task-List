@@ -257,6 +257,8 @@
       display: block;
       margin-top: 2px;
       line-height: 1;
+      transform: scale(1.5);
+      transform-origin: center top;
     }
     .warning-skull.placeholder {
       visibility: hidden;
@@ -582,8 +584,8 @@
                   return `<td class="${todayClass}"></td>`;
                 }
                 const skull = total >= 5
-                  ? `<span class="material-symbols-outlined warning-skull" title="負荷高">skull</span>`
-                  : `<span class="material-symbols-outlined warning-skull placeholder">skull</span>`;
+                  ? `<span class="material-symbols-outlined warning-skull" title="負荷高">warning</span>`
+                  : `<span class="material-symbols-outlined warning-skull placeholder">warning</span>`;
                 return `<td class="${todayClass}"><div class="daily-total-cell"><span class="daily-total-value">${total}</span>${skull}</div></td>`;
               }).join("")}
             </tr>

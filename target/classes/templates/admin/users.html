@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ユーザー一覧</title>
+  <title th:text="#{admin.users.list}">ユーザー一覧</title>
   <style>
     :root {
       --bg: #f6f7fb;
@@ -30,26 +30,10 @@
       border-bottom: 1px solid var(--border);
     }
     .header .auth { max-width: 45%; }
-    .header-title {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .header-logo {
-      width: 48px;
-      height: 48px;
-      object-fit: contain;
-    }
-    h1 {
-      margin: 0;
-      font-size: 24px;
-      letter-spacing: 0.02em;
-    }
-    .sub {
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 13px;
-    }
+    .header-title { display: flex; align-items: center; gap: 12px; }
+    .header-logo { width: 48px; height: 48px; object-fit: contain; }
+    h1 { margin: 0; font-size: 24px; letter-spacing: 0.02em; }
+    .sub { margin-top: 4px; color: var(--muted); font-size: 13px; }
     .auth {
       position: absolute;
       top: 18px;
@@ -90,6 +74,18 @@
       font-weight: 600;
     }
     .breadcrumb-sep { color: #9ca3af; }
+    .admin-link a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-weak);
+      color: var(--accent);
+      padding: 6px 10px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 12px;
+    }
     .card {
       margin-top: 16px;
       background: var(--card);
@@ -97,10 +93,7 @@
       border-radius: 10px;
       padding: 16px;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+    table { width: 100%; border-collapse: collapse; }
     th, td {
       border: 1px solid var(--border);
       padding: 12px 10px;
@@ -115,36 +108,6 @@
       font-size: 11px;
     }
     tr:last-child td { border-bottom: none; }
-    .footer { margin-top: 14px; }
-    .footer a {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 600;
-    }
-    .admin-link {
-      margin-top: 0;
-      display: flex;
-      justify-content: flex-end;
-    }
-    .admin-link a {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--accent-weak);
-      color: var(--accent);
-      padding: 6px 10px;
-      border-radius: 10px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 12px;
-    }
-    @media (max-width: 1025px) {
-      .header { padding: 16px 18px; }
-      .header-title { gap: 10px; }
-      .header-logo { width: 40px; height: 40px; }
-      h1 { font-size: 22px; }
-      .header .auth { max-width: 50%; }
-    }
     @media (max-width: 750px) {
       .header {
         display: grid;
@@ -167,32 +130,32 @@
   <div class="page">
     <div class="header">
       <div class="header-title">
-        <img class="header-logo" src="/images/animal_hashibirokou_manage.png" alt="アイコン" />
+        <img class="header-logo" src="/images/animal_hashibirokou_manage.png" alt="icon" />
         <div>
-          <h1>ユーザー一覧</h1>
-          <div class="sub">User List</div>
+          <h1 th:text="#{admin.users.list}">ユーザー一覧</h1>
+          <div class="sub" th:text="#{admin.users.subtitle}">User List</div>
         </div>
       </div>
 
       <div class="auth" sec:authorize="isAuthenticated()">
-        <span>ログイン中: <strong sec:authentication="name">user</strong></span>
+        <span><span th:text="#{label.loggedIn}">ログイン中</span>: <strong sec:authentication="name">user</strong></span>
         <form th:action="@{/logout}" method="post">
           <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-          <button type="submit">ログアウト</button>
+          <button type="submit" th:text="#{action.logout}">ログアウト</button>
         </form>
       </div>
     </div>
 
     <div class="breadcrumbs-row">
       <nav class="breadcrumbs" aria-label="breadcrumb">
-        <a th:href="@{/}">トップ</a>
+        <a th:href="@{/}" th:text="#{action.top}">トップ</a>
         <span class="breadcrumb-sep">/</span>
         <a th:href="@{/admin}" th:text="#{action.adminPage}">管理画面</a>
         <span class="breadcrumb-sep">/</span>
-        <span>ユーザー一覧</span>
+        <span th:text="#{admin.users.list}">ユーザー一覧</span>
       </nav>
       <div class="admin-link">
-        <a th:href="@{/admin/users/manage}">ユーザー管理</a>
+        <a th:href="@{/admin/users/manage}" th:text="#{action.userManage}">ユーザー管理</a>
       </div>
     </div>
 
@@ -201,11 +164,11 @@
         <thead>
           <tr>
             <th>ID</th>
-            <th>ユーザー名 / Username</th>
-            <th>ロール / Role</th>
-            <th>全タスク数 / Total</th>
-            <th>未完了 / Incomplete</th>
-            <th>期限切れ / Overdue</th>
+            <th th:text="#{label.username}">ユーザー名</th>
+            <th th:text="#{admin.users.role}">ロール</th>
+            <th th:text="#{admin.users.totalTasks}">全タスク数</th>
+            <th th:text="#{admin.users.incomplete}">未完了</th>
+            <th th:text="#{admin.users.overdue}">期限切れ</th>
           </tr>
         </thead>
         <tbody>
@@ -220,10 +183,6 @@
         </tbody>
       </table>
     </div>
-
   </div>
 </body>
 </html>
-
-
-

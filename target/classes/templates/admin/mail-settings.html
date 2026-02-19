@@ -3,251 +3,111 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>リマインダーメール設定</title>
+  <title th:text="#{admin.mail.title}">リマインダー設定</title>
   <style>
-    :root {
-      --bg: #f6f7fb;
-      --card: #ffffff;
-      --text: #1f2937;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-      --accent: #2563eb;
-      --danger: #ef4444;
-      --success: #10b981;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      padding: 24px;
-      background: var(--bg);
-      color: var(--text);
-      font-family: "Segoe UI", "Noto Sans JP", system-ui, -apple-system, sans-serif;
-    }
-    .page { max-width: 980px; margin: 0 auto; }
-    .header {
-      position: relative;
-      padding: 20px 24px;
-      background: transparent;
-      border-bottom: 1px solid var(--border);
-    }
-    .header .auth { max-width: 45%; }
-    .header-title {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .header-logo {
-      width: 48px;
-      height: 48px;
-      object-fit: contain;
-    }
-    h1 { margin: 0; font-size: 24px; letter-spacing: 0.02em; }
-    .sub { margin-top: 4px; color: var(--muted); font-size: 13px; }
-    .sub.spaced { margin-bottom: 1em; }
-    .auth {
-      position: absolute;
-      top: 18px;
-      right: 24px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      color: var(--muted);
-    }
-    .auth strong { color: var(--text); }
-    .auth button {
-      border: 1px solid var(--border);
-      background: #fff;
-      padding: 4px 10px;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-    .breadcrumbs {
-      margin-top: 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .breadcrumbs a {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 600;
-    }
-    .breadcrumb-sep { color: #9ca3af; }
-    .card {
-      margin-top: 16px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px;
-    }
-    .card h2 {
-      margin: 0 0 12px;
-      font-size: 16px;
-      color: var(--text);
-    }
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr 160px;
-      gap: 12px;
-      align-items: end;
-    }
-    label {
-      font-size: 12px;
-      color: var(--muted);
-      display: block;
-      margin-bottom: 4px;
-    }
-    input {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      font-size: 14px;
-      background: #fff;
-    }
-    button.primary {
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      padding: 10px 14px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    .alert {
-      margin-top: 12px;
-      padding: 10px 12px;
-      border-radius: 6px;
-      font-size: 13px;
-    }
-    .alert.success {
-      background: rgba(16, 185, 129, 0.12);
-      color: #0f766e;
-      border: 1px solid rgba(16, 185, 129, 0.25);
-    }
-    .alert.error {
-      background: rgba(239, 68, 68, 0.12);
-      color: #b91c1c;
-      border: 1px solid rgba(239, 68, 68, 0.25);
-    }
-    .hint {
-      margin-top: 6px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-    .footer { margin-top: 14px; }
-    .footer a {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 600;
-    }
-    @media (max-width: 1025px) {
-      .header { padding: 16px 18px; }
-      .header-title { gap: 10px; }
-      .header-logo { width: 40px; height: 40px; }
-      h1 { font-size: 22px; }
-      .header .auth { max-width: 50%; }
-      .form-grid { grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width: 750px) {
-      .header {
-        display: grid;
-        grid-template-columns: 1fr;
-        row-gap: 10px;
-      }
-      .header .auth {
-        position: static;
-        justify-content: flex-start;
-        max-width: 100%;
-      }
-      .form-grid { grid-template-columns: 1fr; }
-    }
+    :root { --bg:#f6f7fb; --card:#fff; --text:#1f2937; --muted:#6b7280; --border:#e5e7eb; --accent:#2563eb; --danger:#ef4444; --success:#10b981; }
+    *{box-sizing:border-box;}
+    body{margin:0;padding:24px;background:var(--bg);color:var(--text);font-family:"Segoe UI","Noto Sans JP",system-ui,-apple-system,sans-serif;}
+    .page{max-width:980px;margin:0 auto;}
+    .header{position:relative;padding:20px 24px;border-bottom:1px solid var(--border);}
+    .header-title{display:flex;align-items:center;gap:12px;}
+    .header-logo{width:48px;height:48px;object-fit:contain;}
+    h1{margin:0;font-size:24px;letter-spacing:.02em;}
+    .sub{margin-top:4px;color:var(--muted);font-size:13px;}
+    .sub.spaced{margin-bottom:1em;}
+    .auth{position:absolute;top:18px;right:24px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);}
+    .auth strong{color:var(--text);}
+    .auth button{border:1px solid var(--border);background:#fff;padding:4px 10px;border-radius:10px;cursor:pointer;}
+    .breadcrumbs{margin-top:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--muted);}
+    .breadcrumbs a{color:var(--accent);text-decoration:none;font-weight:600;}
+    .breadcrumb-sep{color:#9ca3af;}
+    .card{margin-top:16px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;}
+    .card h2{margin:0 0 12px;font-size:16px;color:var(--text);}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr 1fr 160px;gap:12px;align-items:end;}
+    label{font-size:12px;color:var(--muted);display:block;margin-bottom:4px;}
+    input{width:100%;padding:10px 12px;border-radius:6px;border:1px solid var(--border);font-size:14px;background:#fff;}
+    button.primary{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:10px 14px;cursor:pointer;font-weight:600;}
+    .alert{margin-top:12px;padding:10px 12px;border-radius:6px;font-size:13px;}
+    .alert.success{background:rgba(16,185,129,.12);color:#0f766e;border:1px solid rgba(16,185,129,.25);}
+    .alert.error{background:rgba(239,68,68,.12);color:#b91c1c;border:1px solid rgba(239,68,68,.25);}
+    .hint{margin-top:6px;color:var(--muted);font-size:12px;}
   </style>
 </head>
 <body>
   <div class="page">
     <div class="header">
       <div class="header-title">
-        <img class="header-logo" src="/images/animal_hashibirokou_manage.png" alt="アイコン" />
+        <img class="header-logo" src="/images/animal_hashibirokou_manage.png" alt="icon" />
         <div>
-          <h1>リマインダーメール送信元設定</h1>
-          <div class="sub">Reminder Sender Settings</div>
+          <h1 th:text="#{admin.mail.title}">リマインダー設定</h1>
+          <div class="sub" th:text="#{admin.mail.subtitle}">Reminder Sender Settings</div>
         </div>
       </div>
-
       <div class="auth" sec:authorize="isAuthenticated()">
-        <span>ログイン中: <strong sec:authentication="name">user</strong></span>
+        <span><span th:text="#{label.loggedIn}">ログイン中</span>: <strong sec:authentication="name">user</strong></span>
         <form th:action="@{/logout}" method="post">
           <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-          <button type="submit">ログアウト</button>
+          <button type="submit" th:text="#{action.logout}">ログアウト</button>
         </form>
       </div>
     </div>
 
     <nav class="breadcrumbs" aria-label="breadcrumb">
-      <a th:href="@{/}">トップ</a>
+      <a th:href="@{/}" th:text="#{action.top}">トップ</a>
       <span class="breadcrumb-sep">/</span>
       <a th:href="@{/admin}" th:text="#{action.adminPage}">管理画面</a>
       <span class="breadcrumb-sep">/</span>
-      <span>メール設定</span>
+      <span th:text="#{admin.mail.breadcrumb}">メール設定</span>
     </nav>
 
     <div class="alert success" th:if="${message}" th:text="${message}">更新しました</div>
     <div class="alert error" th:if="${error}" th:text="${error}">エラー</div>
 
     <div class="card">
-      <h2>送信元設定</h2>
-      <div class="sub spaced">Gmail のアドレスとアプリパスワードを設定します。</div>
+      <h2 th:text="#{admin.mail.sender}">送信元設定</h2>
+      <div class="sub spaced" th:text="#{admin.mail.senderHelp}">Gmail のアドレスとアプリパスワードを設定します。</div>
       <form th:action="@{/admin/mail-settings/save}" method="post">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <div class="form-grid">
           <div>
-            <label>Gmail アドレス</label>
+            <label th:text="#{admin.mail.gmail}">Gmail アドレス</label>
             <input type="email" name="username" th:value="${settings.username}" required />
           </div>
           <div>
-            <label>アプリパスワード</label>
-            <input type="password" name="appPassword" placeholder="変更時のみ入力" />
+            <label th:text="#{admin.mail.appPassword}">アプリパスワード</label>
+            <input type="password" name="appPassword" th:placeholder="#{admin.mail.appPasswordPlaceholder}" placeholder="変更時のみ入力" />
           </div>
           <div>
-            <label>From アドレス</label>
+            <label th:text="#{admin.mail.from}">From アドレス</label>
             <input type="email" name="fromAddress" th:value="${settings.fromAddress}" />
           </div>
           <div>
-            <button class="primary" type="submit">保存</button>
+            <button class="primary" type="submit" th:text="#{action.save}">保存</button>
           </div>
         </div>
-        <div class="hint">パスワード欄が空の場合、既存設定を維持します。</div>
+        <div class="hint" th:text="#{admin.mail.passwordHint}">パスワード欄が空の場合、既存設定を維持します。</div>
       </form>
     </div>
 
     <div class="card">
-      <h2>テストメール送信</h2>
-      <div class="sub spaced">送信先アドレスを指定してテスト送信します。</div>
+      <h2 th:text="#{admin.mail.test}">テストメール送信</h2>
+      <div class="sub spaced" th:text="#{admin.mail.testHelp}">送信先アドレスを指定してテスト送信します。</div>
       <form th:action="@{/admin/mail-settings/test}" method="post">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <div class="form-grid">
           <div>
-            <label>送信先メールアドレス</label>
+            <label th:text="#{admin.mail.to}">送信先メールアドレス</label>
             <input type="email" name="to" placeholder="example@example.com" required />
           </div>
           <div></div>
           <div></div>
           <div>
-            <button class="primary" type="submit">テスト送信</button>
+            <button class="primary" type="submit" th:text="#{action.testSend}">テスト送信</button>
           </div>
         </div>
       </form>
-      <div class="hint">実行結果は画面上部のメッセージで確認できます。</div>
+      <div class="hint" th:text="#{admin.mail.resultHint}">実行結果は画面上部のメッセージで確認できます。</div>
     </div>
-
   </div>
 </body>
 </html>
-
-
-

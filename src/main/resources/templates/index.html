@@ -745,7 +745,7 @@
       </div>
 
       <div class="auth" sec:authorize="isAuthenticated()">
-        <span>ログイン中: <strong sec:authentication="name">user</strong></span>
+        <span><span th:text="#{label.loggedIn}">ログイン中</span>: <strong sec:authentication="name">user</strong></span>
         <form th:action="@{/logout}" method="post">
           <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
           <button type="submit" th:text="#{action.logout}">ログアウト</button>
@@ -769,39 +769,39 @@
 
     <div class="info-wrap">
       <div class="info-section">
-        <div class="weather-card" data-city="東京" data-lat="35.6895" data-lon="139.692" aria-live="polite">
-          <p class="weather-title">今日の東京</p>
-          <div class="weather-meta">読み込み中...</div>
+        <div class="weather-card" th:attr="data-city=#{weather.city.tokyo}" data-lat="35.6895" data-lon="139.692" aria-live="polite">
+          <p class="weather-title" th:text="${#messages.msg('weather.todayInPrefix') + #messages.msg('weather.city.tokyo')}">今日の東京</p>
+          <div class="weather-meta" th:text="#{label.loading}">読み込み中...</div>
         </div>
-        <div class="weather-card" data-city="京都" data-lat="35.0211" data-lon="135.754" aria-live="polite">
-          <p class="weather-title">今日の京都</p>
-          <div class="weather-meta">読み込み中...</div>
+        <div class="weather-card" th:attr="data-city=#{weather.city.kyoto}" data-lat="35.0211" data-lon="135.754" aria-live="polite">
+          <p class="weather-title" th:text="${#messages.msg('weather.todayInPrefix') + #messages.msg('weather.city.kyoto')}">今日の京都</p>
+          <div class="weather-meta" th:text="#{label.loading}">読み込み中...</div>
         </div>
         <div class="fx-card" id="fx-card" aria-live="polite">
-          <p class="fx-title">為替</p>
-          <div class="fx-meta">読み込み中...</div>
+          <p class="fx-title" th:text="#{fx.title}">為替</p>
+          <div class="fx-meta" th:text="#{label.loading}">読み込み中...</div>
         </div>
         <div class="progress-card" aria-live="polite">
           <div class="progress-content"
                th:style="'--not-started-end:' + ${monthlyNotStartedEnd} + '%; --in-progress-end:' + ${monthlyInProgressEnd} + '%;'">
             <div class="progress-left">
-              <p class="progress-title">当月進捗</p>
+              <p class="progress-title" th:text="#{progress.title}">当月進捗</p>
               <div class="progress-stats">
                 <div>
                   <span class="legend-dot" style="background:#94a3b8;"></span>
-                  未着手 <strong th:text="${monthlyNotStartedCount}">0</strong>
+                  <span th:text="#{status.NOT_STARTED}">未着手</span> <strong th:text="${monthlyNotStartedCount}">0</strong>
                 </div>
                 <div>
                   <span class="legend-dot" style="background:#f59e0b;"></span>
-                  対応中 <strong th:text="${monthlyInProgressCount}">0</strong>
+                  <span th:text="#{status.IN_PROGRESS}">対応中</span> <strong th:text="${monthlyInProgressCount}">0</strong>
                 </div>
                 <div>
                   <span class="legend-dot" style="background:#14b8a6;"></span>
-                  完了 <strong th:text="${monthlyCompletedCount}">0</strong>
+                  <span th:text="#{status.COMPLETED}">完了</span> <strong th:text="${monthlyCompletedCount}">0</strong>
                 </div>
               </div>
             </div>
-            <div class="progress-donut" role="img" aria-label="当月進捗">
+            <div class="progress-donut" role="img" th:attr="aria-label=#{progress.title}">
               <span class="progress-rate" th:text="${monthlyCompletedRateText} + '%'">0.0%</span>
             </div>
           </div>
@@ -837,7 +837,7 @@
 
       <div class="board" th:if="${!#lists.isEmpty(todos)}">
         <section class="board-column" data-status="NOT_STARTED">
-          <div class="board-header"><span>未着手</span><span class="board-count">0件</span></div>
+          <div class="board-header"><span th:text="#{status.NOT_STARTED}">未着手</span><span class="board-count">0</span></div>
           <div class="board-list">
             <article class="todo-card"
                      th:each="todo : ${todos}"
@@ -845,7 +845,7 @@
                      th:attr="data-id=${todo.id},
                               data-title=${todo.title},
                               data-group=${todo.categoryName != null ? todo.categoryName : #messages.msg('label.notSet')},
-                              data-priority=${#messages.msg('priority.' + todo.priority.name())},
+                              data-priority=${#locale.language == 'en' ? (todo.priority.name() == 'HIGH' ? 'H' : (todo.priority.name() == 'LOW' ? 'L' : 'M')) : #messages.msg('priority.' + todo.priority.name())},
                               data-deadline=${todo.deadline != null ? #temporals.format(todo.deadline, 'yyyy-MM-dd') : '-'},
                               data-status=${todo.status != null ? #messages.msg('status.' + todo.status.name()) : #messages.msg('status.NOT_STARTED')},
                               data-assignee=${todo.assignee != null and !#strings.isEmpty(todo.assignee) ? todo.assignee : '-'},
@@ -855,7 +855,7 @@
               <div class="todo-line todo-line-flex todo-head-line"
                    th:style="'background:' + (${todo.categoryColor} ?: '#94a3b8') + ';'">
                 <span th:text="${todo.categoryName != null ? todo.categoryName : #messages.msg('label.notSet')}">未設定</span>
-                <span th:text="${#messages.msg('priority.' + todo.priority.name())}"
+                <span th:text="${#locale.language == 'en' ? (todo.priority.name() == 'HIGH' ? 'H' : (todo.priority.name() == 'LOW' ? 'L' : 'M')) : #messages.msg('priority.' + todo.priority.name())}"
                       th:classappend="${todo.priority.name() == 'HIGH'} ? 'priority-badge priority-high' :
                                       (${todo.priority.name() == 'LOW'} ? 'priority-badge priority-low' : 'priority-badge priority-medium')">中</span>
               </div>
@@ -865,10 +865,10 @@
                 detail
               </div>
               <div class="todo-line todo-line-pair">
-                <span th:text="'期限: ' + ${todo.deadline != null ? #temporals.format(todo.deadline, 'yyyy-MM-dd') : '-'}">期限: -</span>
+                <span th:text="#{label.deadlinePrefix} + ${todo.deadline != null ? #temporals.format(todo.deadline, 'yyyy-MM-dd') : '-'}">期限: -</span>
                 <span th:text="${todo.status != null ? #messages.msg('status.' + todo.status.name()) : #messages.msg('status.NOT_STARTED')}">未着手</span>
               </div>
-              <div class="todo-line" th:text="'担当: ' + ${todo.assignee != null and !#strings.isEmpty(todo.assignee) ? todo.assignee : '-'}">担当: -</div>
+              <div class="todo-line" th:text="#{label.assigneePrefix} + ${todo.assignee != null and !#strings.isEmpty(todo.assignee) ? todo.assignee : '-'}">担当: -</div>
               <div class="todo-line" th:if="${attachmentsMap != null and attachmentsMap[todo.id] != null}">
                 <a th:each="a : ${attachmentsMap[todo.id]}"
                    th:href="@{/attachments/{id}/download(id=${a.id})}"
@@ -880,7 +880,7 @@
         </section>
 
         <section class="board-column" data-status="IN_PROGRESS">
-          <div class="board-header"><span>対応中</span><span class="board-count">0件</span></div>
+          <div class="board-header"><span th:text="#{status.IN_PROGRESS}">対応中</span><span class="board-count">0</span></div>
           <div class="board-list">
             <article class="todo-card"
                      th:each="todo : ${todos}"
@@ -888,7 +888,7 @@
                      th:attr="data-id=${todo.id},
                               data-title=${todo.title},
                               data-group=${todo.categoryName != null ? todo.categoryName : #messages.msg('label.notSet')},
-                              data-priority=${#messages.msg('priority.' + todo.priority.name())},
+                              data-priority=${#locale.language == 'en' ? (todo.priority.name() == 'HIGH' ? 'H' : (todo.priority.name() == 'LOW' ? 'L' : 'M')) : #messages.msg('priority.' + todo.priority.name())},
                               data-deadline=${todo.deadline != null ? #temporals.format(todo.deadline, 'yyyy-MM-dd') : '-'},
                               data-status=${todo.status != null ? #messages.msg('status.' + todo.status.name()) : #messages.msg('status.NOT_STARTED')},
                               data-assignee=${todo.assignee != null and !#strings.isEmpty(todo.assignee) ? todo.assignee : '-'},
@@ -898,7 +898,7 @@
               <div class="todo-line todo-line-flex todo-head-line"
                    th:style="'background:' + (${todo.categoryColor} ?: '#94a3b8') + ';'">
                 <span th:text="${todo.categoryName != null ? todo.categoryName : #messages.msg('label.notSet')}">未設定</span>
-                <span th:text="${#messages.msg('priority.' + todo.priority.name())}"
+                <span th:text="${#locale.language == 'en' ? (todo.priority.name() == 'HIGH' ? 'H' : (todo.priority.name() == 'LOW' ? 'L' : 'M')) : #messages.msg('priority.' + todo.priority.name())}"
                       th:classappend="${todo.priority.name() == 'HIGH'} ? 'priority-badge priority-high' :
                                       (${todo.priority.name() == 'LOW'} ? 'priority-badge priority-low' : 'priority-badge priority-medium')">中</span>
               </div>
@@ -908,10 +908,10 @@
                 detail
               </div>
               <div class="todo-line todo-line-pair">
-                <span th:text="'期限: ' + ${todo.deadline != null ? #temporals.format(todo.deadline, 'yyyy-MM-dd') : '-'}">期限: -</span>
+                <span th:text="#{label.deadlinePrefix} + ${todo.deadline != null ? #temporals.format(todo.deadline, 'yyyy-MM-dd') : '-'}">期限: -</span>
                 <span th:text="${todo.status != null ? #messages.msg('status.' + todo.status.name()) : #messages.msg('status.NOT_STARTED')}">対応中</span>
               </div>
-              <div class="todo-line" th:text="'担当: ' + ${todo.assignee != null and !#strings.isEmpty(todo.assignee) ? todo.assignee : '-'}">担当: -</div>
+              <div class="todo-line" th:text="#{label.assigneePrefix} + ${todo.assignee != null and !#strings.isEmpty(todo.assignee) ? todo.assignee : '-'}">担当: -</div>
               <div class="todo-line" th:if="${attachmentsMap != null and attachmentsMap[todo.id] != null}">
                 <a th:each="a : ${attachmentsMap[todo.id]}"
                    th:href="@{/attachments/{id}/download(id=${a.id})}"
@@ -925,14 +925,14 @@
         <section class="board-column" data-status="COMPLETED">
           <div class="board-header">
             <span class="board-header-title">
-              <span>完了</span>
-              <span class="board-count">0件</span>
+              <span th:text="#{status.COMPLETED}">完了</span>
+              <span class="board-count">0</span>
               <a th:if="${showAllCompletedCards}"
                  th:href="@{/(keyword=${keyword}, categoryId=${categoryId}, includeCompleted=${includeCompleted}, showAllCompleted=false, sort='createdAt', dir='desc')}"
-                 class="action-button">完了アイテムを非表示</a>
+                 class="action-button" th:text="#{action.hideCompletedItems}">完了アイテムを非表示</a>
               <a th:unless="${showAllCompletedCards}"
                  th:href="@{/(keyword=${keyword}, categoryId=${categoryId}, includeCompleted=${includeCompleted}, showAllCompleted=true, sort='createdAt', dir='desc')}"
-                 class="action-button">すべて表示</a>
+                 class="action-button" th:text="#{action.showAll}">すべて表示</a>
             </span>
           </div>
           <div class="board-list">
@@ -942,7 +942,7 @@
                      th:attr="data-id=${todo.id},
                               data-title=${todo.title},
                               data-group=${todo.categoryName != null ? todo.categoryName : #messages.msg('label.notSet')},
-                              data-priority=${#messages.msg('priority.' + todo.priority.name())},
+                              data-priority=${#locale.language == 'en' ? (todo.priority.name() == 'HIGH' ? 'H' : (todo.priority.name() == 'LOW' ? 'L' : 'M')) : #messages.msg('priority.' + todo.priority.name())},
                               data-deadline=${todo.deadline != null ? #temporals.format(todo.deadline, 'yyyy-MM-dd') : '-'},
                               data-status=${todo.status != null ? #messages.msg('status.' + todo.status.name()) : #messages.msg('status.NOT_STARTED')},
                               data-assignee=${todo.assignee != null and !#strings.isEmpty(todo.assignee) ? todo.assignee : '-'},
@@ -952,7 +952,7 @@
               <div class="todo-line todo-line-flex todo-head-line"
                    th:style="'background:' + (${todo.categoryColor} ?: '#94a3b8') + ';'">
                 <span th:text="${todo.categoryName != null ? todo.categoryName : #messages.msg('label.notSet')}">未設定</span>
-                <span th:text="${#messages.msg('priority.' + todo.priority.name())}"
+                <span th:text="${#locale.language == 'en' ? (todo.priority.name() == 'HIGH' ? 'H' : (todo.priority.name() == 'LOW' ? 'L' : 'M')) : #messages.msg('priority.' + todo.priority.name())}"
                       th:classappend="${todo.priority.name() == 'HIGH'} ? 'priority-badge priority-high' :
                                       (${todo.priority.name() == 'LOW'} ? 'priority-badge priority-low' : 'priority-badge priority-medium')">中</span>
               </div>
@@ -962,10 +962,10 @@
                 detail
               </div>
               <div class="todo-line todo-line-pair">
-                <span th:text="'期限: ' + ${todo.deadline != null ? #temporals.format(todo.deadline, 'yyyy-MM-dd') : '-'}">期限: -</span>
+                <span th:text="#{label.deadlinePrefix} + ${todo.deadline != null ? #temporals.format(todo.deadline, 'yyyy-MM-dd') : '-'}">期限: -</span>
                 <span th:text="${todo.status != null ? #messages.msg('status.' + todo.status.name()) : #messages.msg('status.NOT_STARTED')}">完了</span>
               </div>
-              <div class="todo-line" th:text="'担当: ' + ${todo.assignee != null and !#strings.isEmpty(todo.assignee) ? todo.assignee : '-'}">担当: -</div>
+              <div class="todo-line" th:text="#{label.assigneePrefix} + ${todo.assignee != null and !#strings.isEmpty(todo.assignee) ? todo.assignee : '-'}">担当: -</div>
               <div class="todo-line" th:if="${attachmentsMap != null and attachmentsMap[todo.id] != null}">
                 <a th:each="a : ${attachmentsMap[todo.id]}"
                    th:href="@{/attachments/{id}/download(id=${a.id})}"
@@ -982,15 +982,15 @@
     <div id="detail-modal" class="modal" aria-hidden="true">
     <div class="modal-backdrop"></div>
     <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="detail-modal-title">
-      <button type="button" id="detail-close-x" class="modal-close-x" aria-label="閉じる">×</button>
-      <h2 id="detail-modal-title" class="modal-title">ToDo詳細</h2>
+      <button type="button" id="detail-close-x" class="modal-close-x" th:attr="aria-label=#{action.close}" aria-label="閉じる">×</button>
+      <h2 id="detail-modal-title" class="modal-title" th:text="#{modal.detailTitle}">ToDo詳細</h2>
       <dl class="detail-grid">
-        <dt>グループ</dt><dd id="detail-group">-</dd>
-        <dt>重要度</dt><dd id="detail-priority">-</dd>
-        <dt>期限</dt><dd id="detail-deadline">-</dd>
-        <dt>状態</dt><dd id="detail-status">-</dd>
-        <dt>担当者</dt><dd id="detail-assignee">-</dd>
-        <dt>詳細</dt><dd id="detail-description">-</dd>
+        <dt th:text="#{label.category}">グループ</dt><dd id="detail-group">-</dd>
+        <dt th:text="#{label.priority}">重要度</dt><dd id="detail-priority">-</dd>
+        <dt th:text="#{label.deadline}">期限</dt><dd id="detail-deadline">-</dd>
+        <dt th:text="#{label.status}">状態</dt><dd id="detail-status">-</dd>
+        <dt th:text="#{label.assignee}">担当者</dt><dd id="detail-assignee">-</dd>
+        <dt th:text="#{label.detail}">詳細</dt><dd id="detail-description">-</dd>
       </dl>
       <div class="modal-actions detail-modal-actions">
         <a id="detail-edit" href="#" class="action-button" th:text="#{action.edit}">編集</a>
@@ -1073,6 +1073,9 @@
     (function () {
       var csrfParam = '[[${_csrf.parameterName}]]';
       var csrfToken = '[[${_csrf.token}]]';
+      var countSuffix = /*[[#{label.countSuffix}]]*/ '件';
+      var detailDefaultTitle = /*[[#{modal.detailTitle}]]*/ 'ToDo詳細';
+      var statusUpdateFailedMessage = /*[[#{alert.statusUpdateFailed}]]*/ 'ステータス更新に失敗しました';
       var draggingCard = null;
       var suppressClickOnce = false;
       var columns = document.querySelectorAll('.board-column');
@@ -1092,7 +1095,7 @@
 
       function openDetailModal(card) {
         if (!detailModal || !card) return;
-        detailTitle.textContent = card.getAttribute('data-title') || 'ToDo詳細';
+        detailTitle.textContent = card.getAttribute('data-title') || detailDefaultTitle;
         detailGroup.textContent = card.getAttribute('data-group') || '-';
         detailPriority.textContent = card.getAttribute('data-priority') || '-';
         detailDeadline.textContent = card.getAttribute('data-deadline') || '-';
@@ -1119,7 +1122,7 @@
           var countEl = col.querySelector('.board-count');
           var list = col.querySelector('.board-list');
           if (!countEl || !list) return;
-          countEl.textContent = list.querySelectorAll('.todo-card').length + '件';
+          countEl.textContent = list.querySelectorAll('.todo-card').length + countSuffix;
         });
       }
 
@@ -1273,7 +1276,7 @@
               }
             }
             refreshCounts();
-            alert('ステータス更新に失敗しました (' + (err && err.message ? err.message : 'unknown') + ')');
+            alert(statusUpdateFailedMessage + ' (' + (err && err.message ? err.message : 'unknown') + ')');
           });
         });
       });
@@ -1281,11 +1284,16 @@
     })();
     </script>
 
-    <script>
+    <script th:inline="javascript">
       (function () {
         var cards = document.querySelectorAll('.weather-card');
         var timezone = 'Asia/Tokyo';
         var dailyParams = 'temperature_2m_max,temperature_2m_min,precipitation_probability_max,weathercode';
+        var weatherTitlePrefix = /*[[#{weather.todayInPrefix}]]*/ '今日の';
+        var weatherErrorMessage = /*[[#{weather.error}]]*/ '天気情報を取得できませんでした';
+        var weatherMaxTempLabel = /*[[#{weather.maxTemp}]]*/ '最高気温';
+        var weatherMinTempLabel = /*[[#{weather.minTemp}]]*/ '最低気温';
+        var weatherPrecipLabel = /*[[#{weather.precip}]]*/ '降水確率';
 
         function renderError(card, message) {
           card.innerHTML = '<p class="weather-title">' + card.dataset.city + '</p>' +
@@ -1306,7 +1314,7 @@
             .then(function (res) { return res.json(); })
             .then(function (data) {
               if (!data || !data.daily || !data.daily.time || !data.daily.time.length) {
-                renderError(card, '天気情報を取得できませんでした');
+                renderError(card, weatherErrorMessage);
                 return;
               }
               var max = data.daily.temperature_2m_max[0];
@@ -1315,49 +1323,52 @@
               var code = data.daily.weathercode ? data.daily.weathercode[0] : null;
               var iconData = weatherIcon(code);
               card.innerHTML =
-                '<p class="weather-title">今日の' + card.dataset.city + '</p>' +
+                '<p class="weather-title">' + weatherTitlePrefix + card.dataset.city + '</p>' +
                 '<div class="weather-values one-row">' +
                 '<div class="weather-icon-wrap"><span class="weather-icon' + iconData.className + '" aria-hidden="true">' + iconData.icon + '</span></div>' +
-                '<div class="temp-stack"><div class="temp-label">最高気温</div><div class="temp-value">' + max + '℃</div></div>' +
-                '<div class="temp-stack"><div class="temp-label">最低気温</div><div class="temp-value">' + min + '℃</div></div>' +
-                '<div class="temp-stack"><div class="temp-label">降水確率</div><div class="temp-value">' + pop + '%</div></div>' +
+                '<div class="temp-stack"><div class="temp-label">' + weatherMaxTempLabel + '</div><div class="temp-value">' + max + '℃</div></div>' +
+                '<div class="temp-stack"><div class="temp-label">' + weatherMinTempLabel + '</div><div class="temp-value">' + min + '℃</div></div>' +
+                '<div class="temp-stack"><div class="temp-label">' + weatherPrecipLabel + '</div><div class="temp-value">' + pop + '%</div></div>' +
                 '</div>' +
                 '<div class="weather-note right">Data: Open-Meteo</div>';
             })
             .catch(function () {
-              renderError(card, '天気情報を取得できませんでした');
+              renderError(card, weatherErrorMessage);
             });
         });
 
         function weatherIcon(code) {
           if (code === null || typeof code === 'undefined') {
-            return { icon: '？', label: '不明', className: '' };
+            return { icon: '？', label: 'Unknown', className: '' };
           }
-          if (code === 0) return { icon: '☀', label: '晴れ', className: ' sunny' };
-          if (code === 1) return { icon: '🌤', label: '晴れ時々雲', className: '' };
-          if (code === 2) return { icon: '⛅', label: '曇り時々晴れ', className: '' };
-          if (code === 3) return { icon: '☁', label: '曇り', className: '' };
-          if (code === 45 || code === 48) return { icon: '🌫', label: '霧', className: '' };
-          if (code === 51 || code === 53 || code === 55 || code === 56 || code === 57) return { icon: '🌦', label: '霧雨', className: '' };
-          if (code === 61 || code === 63 || code === 65 || code === 66 || code === 67) return { icon: '🌧', label: '雨', className: '' };
-          if (code === 71 || code === 73 || code === 75 || code === 77 || code === 85 || code === 86) return { icon: '❄', label: '雪', className: '' };
-          if (code === 80 || code === 81 || code === 82) return { icon: '🌧', label: 'にわか雨', className: '' };
-          if (code === 95 || code === 96 || code === 99) return { icon: '⛈', label: '雷雨', className: '' };
-          return { icon: '？', label: '不明', className: '' };
+          if (code === 0) return { icon: '☀', label: 'Clear', className: ' sunny' };
+          if (code === 1) return { icon: '🌤', label: 'Mainly clear', className: '' };
+          if (code === 2) return { icon: '⛅', label: 'Partly cloudy', className: '' };
+          if (code === 3) return { icon: '☁', label: 'Cloudy', className: '' };
+          if (code === 45 || code === 48) return { icon: '🌫', label: 'Fog', className: '' };
+          if (code === 51 || code === 53 || code === 55 || code === 56 || code === 57) return { icon: '🌦', label: 'Drizzle', className: '' };
+          if (code === 61 || code === 63 || code === 65 || code === 66 || code === 67) return { icon: '🌧', label: 'Rain', className: '' };
+          if (code === 71 || code === 73 || code === 75 || code === 77 || code === 85 || code === 86) return { icon: '❄', label: 'Snow', className: '' };
+          if (code === 80 || code === 81 || code === 82) return { icon: '🌧', label: 'Showers', className: '' };
+          if (code === 95 || code === 96 || code === 99) return { icon: '⛈', label: 'Thunderstorm', className: '' };
+          return { icon: '？', label: 'Unknown', className: '' };
         }
       })();
     </script>
 
 
-    <script>
+    <script th:inline="javascript">
       (function () {
         var card = document.getElementById('fx-card');
         var url = 'https://api.frankfurter.dev/v1/latest?base=JPY&symbols=USD,EUR';
+        var fxTitle = /*[[#{fx.title}]]*/ '為替';
+        var fxError = /*[[#{fx.error}]]*/ '為替情報を取得できませんでした';
+        var fxUpdated = /*[[#{fx.updated}]]*/ '更新日';
 
         function renderError() {
           card.innerHTML =
-            '<p class="fx-title">為替</p>' +
-            '<div class="fx-meta">為替情報を取得できませんでした</div>';
+            '<p class="fx-title">' + fxTitle + '</p>' +
+            '<div class="fx-meta">' + fxError + '</div>';
         }
 
         fetch(url)
@@ -1374,8 +1385,8 @@
                 var eurJpy = jpyEur ? (1 / jpyEur) : null;
             var date = data.date || '';
             card.innerHTML =
-              '<p class="fx-title">為替</p>' +
-              '<div class="fx-meta">更新日: ' + date + '</div>' +
+              '<p class="fx-title">' + fxTitle + '</p>' +
+              '<div class="fx-meta">' + fxUpdated + ': ' + date + '</div>' +
               '<div class="fx-spacer" aria-hidden="true"></div>' +
               '<div class="fx-values">' +
               '<div><div class="fx-label">USD/JPY</div><div>' + formatRate(usdJpy) + '</div></div>' +

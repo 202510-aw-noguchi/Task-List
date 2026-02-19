@@ -3,157 +3,70 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AOPログ</title>
+  <title th:text="#{admin.report.title}">AOPログ</title>
   <style>
-    :root {
-      --bg: #f6f7fb;
-      --card: #ffffff;
-      --text: #1f2937;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-      --accent: #2563eb;
-      --danger: #b91c1c;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      padding: 24px;
-      background: var(--bg);
-      color: var(--text);
-      font-family: "Segoe UI", "Noto Sans JP", system-ui, -apple-system, sans-serif;
-    }
-    .page { max-width: 1100px; margin: 0 auto; }
-    .header {
-      position: relative;
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--border);
-      background: transparent;
-    }
-    .header-title { display: flex; align-items: center; gap: 12px; }
-    .header-logo { width: 48px; height: 48px; object-fit: contain; }
-    h1 { margin: 0; font-size: 24px; }
-    .sub { margin-top: 4px; color: var(--muted); font-size: 13px; }
-    .auth {
-      position: absolute;
-      top: 18px;
-      right: 24px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      color: var(--muted);
-    }
-    .auth button {
-      border: 1px solid var(--border);
-      background: #fff;
-      padding: 4px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .breadcrumbs {
-      margin-top: 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      color: var(--muted);
-      flex-wrap: wrap;
-    }
-    .breadcrumbs a {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 600;
-    }
-    .card {
-      margin-top: 16px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 16px;
-    }
-    .result {
-      margin: 0;
-      font-size: 14px;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-    .error { color: var(--danger); margin: 0; font-size: 14px; }
-    .actions { margin-top: 10px; }
-    .actions a {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 7px 12px;
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      text-decoration: none;
-      color: var(--text);
-      background: #fff;
-      font-size: 13px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 8px;
-    }
-    th, td {
-      border: 1px solid var(--border);
-      padding: 8px 10px;
-      font-size: 13px;
-      vertical-align: top;
-      text-align: left;
-    }
-    th {
-      color: var(--muted);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-    .mono { font-family: Consolas, "Courier New", monospace; }
-    @media (max-width: 800px) {
-      .card { overflow-x: auto; }
-      table { min-width: 860px; }
-    }
+    :root { --bg:#f6f7fb; --card:#fff; --text:#1f2937; --muted:#6b7280; --border:#e5e7eb; --accent:#2563eb; --danger:#b91c1c; }
+    *{box-sizing:border-box;}
+    body{margin:0;padding:24px;background:var(--bg);color:var(--text);font-family:"Segoe UI","Noto Sans JP",system-ui,-apple-system,sans-serif;}
+    .page{max-width:1100px;margin:0 auto;}
+    .header{position:relative;padding:20px 24px;border-bottom:1px solid var(--border);}
+    .header-title{display:flex;align-items:center;gap:12px;}
+    .header-logo{width:48px;height:48px;object-fit:contain;}
+    h1{margin:0;font-size:24px;}
+    .sub{margin-top:4px;color:var(--muted);font-size:13px;}
+    .auth{position:absolute;top:18px;right:24px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);}
+    .auth button{border:1px solid var(--border);background:#fff;padding:4px 10px;border-radius:6px;cursor:pointer;}
+    .breadcrumbs{margin-top:10px;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);flex-wrap:wrap;}
+    .breadcrumbs a{color:var(--accent);text-decoration:none;font-weight:600;}
+    .card{margin-top:16px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;}
+    .result{margin:0;font-size:14px;white-space:pre-wrap;word-break:break-word;}
+    .error{color:var(--danger);margin:0;font-size:14px;}
+    .actions{margin-top:10px;}
+    .actions a{display:inline-flex;align-items:center;justify-content:center;padding:7px 12px;border:1px solid var(--border);border-radius:5px;text-decoration:none;color:var(--text);background:#fff;font-size:13px;}
+    table{width:100%;border-collapse:collapse;margin-top:8px;}
+    th,td{border:1px solid var(--border);padding:8px 10px;font-size:13px;vertical-align:top;text-align:left;}
+    th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em;}
+    .mono{font-family:Consolas,"Courier New",monospace;}
   </style>
 </head>
 <body>
   <div class="page">
     <div class="header">
       <div class="header-title">
-        <img class="header-logo" src="/images/animal_hashibirokou_manage.png" alt="アイコン" />
+        <img class="header-logo" src="/images/animal_hashibirokou_manage.png" alt="icon" />
         <div>
-          <h1>AOPログ</h1>
-          <div class="sub">AOP Logs</div>
+          <h1 th:text="#{admin.report.title}">AOPログ</h1>
+          <div class="sub" th:text="#{admin.report.subtitle}">AOP Logs</div>
         </div>
       </div>
       <div class="auth" sec:authorize="isAuthenticated()">
-        <span>ログイン中: <strong sec:authentication="name">user</strong></span>
+        <span><span th:text="#{label.loggedIn}">ログイン中</span>: <strong sec:authentication="name">user</strong></span>
         <form th:action="@{/logout}" method="post">
           <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-          <button type="submit">ログアウト</button>
+          <button type="submit" th:text="#{action.logout}">ログアウト</button>
         </form>
       </div>
     </div>
 
     <nav class="breadcrumbs" aria-label="breadcrumb">
-      <a th:href="@{/}">トップ</a>
+      <a th:href="@{/}" th:text="#{action.top}">トップ</a>
       <span>/</span>
-      <a th:href="@{/admin}">管理画面</a>
+      <a th:href="@{/admin}" th:text="#{action.adminPage}">管理画面</a>
       <span>/</span>
-      <span>AOPログ</span>
+      <span th:text="#{admin.report.title}">AOPログ</span>
     </nav>
 
     <div class="card">
-      <h2>Result</h2>
+      <h2 th:text="#{admin.report.result}">Result</h2>
       <p class="result" th:if="${reportResult}" th:text="${reportResult}">Report result</p>
       <p class="error" th:if="${reportError}" th:text="${reportError}">Report generation failed</p>
       <div class="actions">
-        <a th:href="@{/admin/report}">再実行・再読込</a>
+        <a th:href="@{/admin/report}" th:text="#{action.reload}">再実行・再読込</a>
       </div>
     </div>
 
     <div class="card">
-      <h2>AOPログ（新しい順）</h2>
+      <h2 th:text="#{admin.report.latest}">AOPログ（新しい順）</h2>
       <table>
         <thead>
           <tr>
@@ -166,7 +79,7 @@
         </thead>
         <tbody>
           <tr th:if="${#lists.isEmpty(aopLogs)}">
-            <td colspan="5">ログはまだありません。</td>
+            <td colspan="5" th:text="#{admin.report.noLogs}">ログはまだありません。</td>
           </tr>
           <tr th:each="log : ${aopLogs}">
             <td class="mono" th:text="${#temporals.format(log.timestamp, 'yyyy-MM-dd HH:mm:ss.SSS')}">2026-02-18 12:00:00.000</td>

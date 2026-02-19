@@ -3,188 +3,40 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>グループ管理</title>
+  <title th:text="#{admin.groups.title}">グループ管理</title>
   <style>
-    :root {
-      --bg: #f6f7fb;
-      --card: #ffffff;
-      --text: #1f2937;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-      --accent: #2563eb;
-      --accent-weak: rgba(37, 99, 235, 0.08);
-      --danger: #b00020;
-    }
+    :root { --bg:#f6f7fb; --card:#fff; --text:#1f2937; --muted:#6b7280; --border:#e5e7eb; --accent:#2563eb; --danger:#b00020; }
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      padding: 24px;
-      background: var(--bg);
-      color: var(--text);
-      font-family: "Segoe UI", "Noto Sans JP", system-ui, -apple-system, sans-serif;
-    }
-    .page { max-width: 920px; margin: 0 auto; }
-    .header {
-      position: relative;
-      padding: 20px 24px;
-      background: transparent;
-      border-bottom: 1px solid var(--border);
-    }
-    .header .auth { max-width: 45%; }
-    .header-title {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .header-logo {
-      width: 48px;
-      height: 48px;
-      object-fit: contain;
-    }
-    h1 { margin: 0; font-size: 24px; letter-spacing: 0.02em; }
-    .sub { margin-top: 4px; color: var(--muted); font-size: 13px; }
-    .auth {
-      position: absolute;
-      top: 18px;
-      right: 24px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      color: var(--muted);
-    }
-    .auth strong { color: var(--text); }
-    .auth button {
-      border: 1px solid var(--border);
-      background: #fff;
-      padding: 4px 10px;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-    .breadcrumbs {
-      margin-top: 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .breadcrumbs a {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 600;
-    }
-    .breadcrumb-sep {
-      color: #9ca3af;
-    }
-    .card {
-      margin-top: 16px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
-      border: 1px solid var(--border);
-      padding: 12px 10px;
-      text-align: left;
-      font-size: 14px;
-      vertical-align: middle;
-    }
-    th {
-      color: var(--muted);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      font-size: 11px;
-    }
-    tr:last-child td { border-bottom: none; }
-    .action-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 6px 10px;
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      background: #fff;
-      color: var(--text);
-      text-decoration: none;
-      font-size: 12px;
-      line-height: 1.4;
-      cursor: pointer;
-    }
-    .message { color: var(--accent); margin-bottom: 10px; }
-    .error { color: var(--danger); margin-bottom: 10px; }
-    .group-create {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-    }
-    .group-create input[type="text"] {
-      max-width: 260px;
-    }
-    .footer { margin-top: 14px; }
-    .footer a {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 600;
-    }
-    input[type="text"] {
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      padding: 6px 8px;
-      width: 100%;
-    }
-    input[type="color"] {
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 0;
-      width: 40px;
-      height: 28px;
-      background: #fff;
-    }
-    .group-form {
-      display: contents;
-    }
-    th.action-cell,
-    td.action-cell {
-      white-space: nowrap;
-      width: 90px;
-    }
-    th.color-cell,
-    td.color-cell {
-      width: 90px;
-    }
-    .action-button.danger {
-      border-color: #f3b4b4;
-      color: #b00020;
-      background: #fff5f5;
-    }
-    @media (max-width: 1025px) {
-      .header { padding: 16px 18px; }
-      .header-title { gap: 10px; }
-      .header-logo { width: 40px; height: 40px; }
-      h1 { font-size: 22px; }
-      .header .auth { max-width: 50%; }
-    }
-    @media (max-width: 750px) {
-      .header {
-        display: grid;
-        grid-template-columns: 1fr;
-        row-gap: 10px;
-      }
-      .header .auth {
-        position: static;
-        justify-content: flex-start;
-        max-width: 100%;
-      }
+    body { margin:0; padding:24px; background:var(--bg); color:var(--text); font-family:"Segoe UI","Noto Sans JP",system-ui,-apple-system,sans-serif; }
+    .page { max-width:920px; margin:0 auto; }
+    .header { position:relative; padding:20px 24px; border-bottom:1px solid var(--border); background:transparent; }
+    .header-title { display:flex; align-items:center; gap:12px; }
+    .header-logo { width:48px; height:48px; object-fit:contain; }
+    h1 { margin:0; font-size:24px; letter-spacing:.02em; }
+    .sub { margin-top:4px; color:var(--muted); font-size:13px; }
+    .auth { position:absolute; top:18px; right:24px; display:flex; align-items:center; gap:10px; font-size:13px; color:var(--muted); }
+    .auth strong { color:var(--text); }
+    .auth button { border:1px solid var(--border); background:#fff; padding:4px 10px; border-radius:10px; cursor:pointer; }
+    .breadcrumbs { margin-top:10px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:12px; color:var(--muted); }
+    .breadcrumbs a { color:var(--accent); text-decoration:none; font-weight:600; }
+    .breadcrumb-sep { color:#9ca3af; }
+    .card { margin-top:16px; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px; }
+    .message { color:var(--accent); margin-bottom:10px; }
+    .error { color:var(--danger); margin-bottom:10px; }
+    .group-create { display:flex; gap:10px; align-items:center; margin-bottom:12px; flex-wrap:wrap; }
+    .group-create input[type="text"] { max-width:260px; border:1px solid var(--border); border-radius:5px; padding:6px 8px; width:100%; }
+    input[type="color"] { border:1px solid var(--border); border-radius:4px; padding:0; width:40px; height:28px; background:#fff; }
+    table { width:100%; border-collapse:collapse; }
+    th, td { border:1px solid var(--border); padding:12px 10px; text-align:left; font-size:14px; vertical-align:middle; }
+    th { color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:11px; }
+    .group-form { display:contents; }
+    th.action-cell, td.action-cell { white-space:nowrap; width:90px; }
+    th.color-cell, td.color-cell { width:90px; }
+    .action-button { display:inline-flex; align-items:center; justify-content:center; padding:6px 10px; border:1px solid var(--border); border-radius:5px; background:#fff; color:var(--text); text-decoration:none; font-size:12px; line-height:1.4; cursor:pointer; }
+    .action-button.danger { border-color:#f3b4b4; color:#b00020; background:#fff5f5; }
+    @media (max-width:750px) {
+      .header { display:grid; grid-template-columns:1fr; row-gap:10px; }
+      .header .auth { position:static; justify-content:flex-start; max-width:100%; }
     }
   </style>
 </head>
@@ -192,26 +44,26 @@
   <div class="page">
     <div class="header">
       <div class="header-title">
-        <img class="header-logo" src="/images/animal_hashibirokou_manage.png" alt="アイコン" />
+        <img class="header-logo" src="/images/animal_hashibirokou_manage.png" alt="icon" />
         <div>
-          <h1>グループ管理</h1>
-          <div class="sub">Group Management</div>
+          <h1 th:text="#{admin.groups.title}">グループ管理</h1>
+          <div class="sub" th:text="#{admin.groups.subtitle}">Group Management</div>
         </div>
       </div>
       <div class="auth" sec:authorize="isAuthenticated()">
-        <span>ログイン中: <strong sec:authentication="name">user</strong></span>
+        <span><span th:text="#{label.loggedIn}">ログイン中</span>: <strong sec:authentication="name">user</strong></span>
         <form th:action="@{/logout}" method="post">
           <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-          <button type="submit">ログアウト</button>
+          <button type="submit" th:text="#{action.logout}">ログアウト</button>
         </form>
       </div>
     </div>
     <nav class="breadcrumbs" aria-label="breadcrumb">
-      <a th:href="@{/}">トップ</a>
+      <a th:href="@{/}" th:text="#{action.top}">トップ</a>
       <span class="breadcrumb-sep">/</span>
       <a th:href="@{/admin}" th:text="#{action.adminPage}">管理画面</a>
       <span class="breadcrumb-sep">/</span>
-      <span>グループ管理</span>
+      <span th:text="#{admin.groups.title}">グループ管理</span>
     </nav>
 
     <div class="card">
@@ -220,19 +72,19 @@
 
       <form th:action="@{/admin/groups/create}" method="post" class="group-create">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-        <input type="text" name="name" placeholder="グループ名" required />
+        <input type="text" name="name" th:placeholder="#{admin.groups.namePlaceholder}" placeholder="グループ名" required />
         <input type="color" name="color" value="#6b7280" />
-        <button type="submit" class="action-button">追加</button>
+        <button type="submit" class="action-button" th:text="#{action.add}">追加</button>
       </form>
 
       <table>
         <thead>
           <tr>
             <th>ID</th>
-            <th>グループ名</th>
-            <th class="color-cell">カラー</th>
-            <th class="action-cell">更新</th>
-            <th class="action-cell">削除</th>
+            <th th:text="#{admin.groups.name}">グループ名</th>
+            <th class="color-cell" th:text="#{admin.groups.color}">カラー</th>
+            <th class="action-cell" th:text="#{action.update}">更新</th>
+            <th class="action-cell" th:text="#{action.delete}">削除</th>
           </tr>
         </thead>
         <tbody>
@@ -248,24 +100,21 @@
                 <input type="color" name="color" th:value="${g.color}" />
             </td>
             <td class="action-cell">
-                <button type="submit" class="action-button">更新</button>
+                <button type="submit" class="action-button" th:text="#{action.update}">更新</button>
               </form>
             </td>
             <td class="action-cell">
-              <form th:action="@{/admin/groups/delete}" method="post" onsubmit="return confirm('削除しますか？');">
+              <form th:action="@{/admin/groups/delete}" method="post"
+                    th:attr="onsubmit=|return confirm('${#messages.msg('confirm.delete')}');|">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <input type="hidden" name="groupId" th:value="${g.id}" />
-                <button type="submit" class="action-button danger">削除</button>
+                <button type="submit" class="action-button danger" th:text="#{action.delete}">削除</button>
               </form>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
-
   </div>
 </body>
 </html>
-
-
-
