@@ -1,0 +1,147 @@
+Date : 2026-02-19 14:50:02
+Directory : c:\academia\src\Task-List\src\main
+Total : 92 files,  8890 codes, 746 comments, 899 blanks, all 10535 lines
+
+Languages
++-----------------+------------+------------+------------+------------+------------+
+| language        | files      | code       | comment    | blank      | total      |
++-----------------+------------+------------+------------+------------+------------+
+| HTML            |         20 |      4,618 |          0 |        176 |      4,794 |
+| Java            |         64 |      3,555 |        737 |        643 |      4,935 |
+| Java Properties |          3 |        345 |          9 |         47 |        401 |
+| XML             |          2 |        211 |          0 |         12 |        223 |
+| MS SQL          |          2 |        103 |          0 |         11 |        114 |
+| PostCSS         |          1 |         58 |          0 |         10 |         68 |
++-----------------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                 | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                    |         92 |      8,890 |        746 |        899 |     10,535 |
+| java                                                                                                 |         64 |      3,555 |        737 |        643 |      4,935 |
+| java\com                                                                                             |         64 |      3,555 |        737 |        643 |      4,935 |
+| java\com\example                                                                                     |         64 |      3,555 |        737 |        643 |      4,935 |
+| java\com\example\todo                                                                                |         64 |      3,555 |        737 |        643 |      4,935 |
+| java\com\example\todo (Files)                                                                        |          1 |         13 |          0 |          3 |         16 |
+| java\com\example\todo\aop                                                                            |          4 |        117 |          0 |         24 |        141 |
+| java\com\example\todo\api                                                                            |          1 |         37 |          0 |         12 |         49 |
+| java\com\example\todo\audit                                                                          |          2 |        152 |          0 |         13 |        165 |
+| java\com\example\todo\config                                                                         |          5 |        241 |          0 |         35 |        276 |
+| java\com\example\todo\controller                                                                     |         12 |      1,248 |        230 |        126 |      1,604 |
+| java\com\example\todo\dto                                                                            |          2 |         69 |          0 |         22 |         91 |
+| java\com\example\todo\entity                                                                         |         10 |        562 |        204 |        184 |        950 |
+| java\com\example\todo\exception                                                                      |          5 |        170 |          0 |         39 |        209 |
+| java\com\example\todo\form                                                                           |          2 |         93 |        127 |         33 |        253 |
+| java\com\example\todo\mapper                                                                         |          2 |         43 |          0 |         15 |         58 |
+| java\com\example\todo\repository                                                                     |          6 |         49 |          0 |         26 |         75 |
+| java\com\example\todo\service                                                                        |         12 |        761 |        176 |        111 |      1,048 |
+| resources                                                                                            |         28 |      5,335 |          9 |        256 |      5,600 |
+| resources (Files)                                                                                    |          7 |        659 |          9 |         70 |        738 |
+| resources\static                                                                                     |          1 |         58 |          0 |         10 |         68 |
+| resources\static\css                                                                                 |          1 |         58 |          0 |         10 |         68 |
+| resources\templates                                                                                  |         20 |      4,618 |          0 |        176 |      4,794 |
+| resources\templates (Files)                                                                          |          8 |      2,981 |          0 |        113 |      3,094 |
+| resources\templates\admin                                                                            |          8 |      1,567 |          0 |         59 |      1,626 |
+| resources\templates\error                                                                            |          3 |         40 |          0 |          3 |         43 |
+| resources\templates\mail                                                                             |          1 |         30 |          0 |          1 |         31 |
++------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------------------------------------------+-----------------+------------+------------+------------+------------+
+| filename                                                                                             | language        | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------------------------+-----------------+------------+------------+------------+------------+
+| c:\academia\src\Task-List\src\main\java\com\example\todo\TodoApplication.java                        | Java            |         13 |          0 |          3 |         16 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\aop\AopTraceEntry.java                      | Java            |         10 |          0 |          3 |         13 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\aop\AopTraceStore.java                      | Java            |         33 |          0 |          7 |         40 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\aop\LoggingAspect.java                      | Java            |         42 |          0 |          8 |         50 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\aop\PerformanceAspect.java                  | Java            |         32 |          0 |          6 |         38 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\api\ApiResponse.java                        | Java            |         37 |          0 |         12 |         49 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\audit\AuditAspect.java                      | Java            |        140 |          0 |         10 |        150 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\audit\Auditable.java                        | Java            |         12 |          0 |          3 |         15 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\config\AsyncConfig.java                     | Java            |         44 |          0 |          7 |         51 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\config\PasswordResetEnforcementFilter.java  | Java            |         55 |          0 |          9 |         64 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\config\SecurityConfig.java                  | Java            |         50 |          0 |          7 |         57 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\config\UserDataInitializer.java             | Java            |         38 |          0 |          4 |         42 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\config\WebConfig.java                       | Java            |         54 |          0 |          8 |         62 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\controller\AdminAuditLogController.java     | Java            |         74 |          0 |          5 |         79 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\controller\AdminController.java             | Java            |         44 |          0 |          6 |         50 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\controller\AdminGroupController.java        | Java            |        103 |          0 |          8 |        111 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\controller\AdminMailSettingsController.java | Java            |         57 |          0 |          7 |         64 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\controller\AdminUserController.java         | Java            |        147 |          0 |         19 |        166 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\controller\GanttController.java             | Java            |         91 |          0 |          9 |        100 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\controller\LoginController.java             | Java            |         10 |          0 |          3 |         13 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\controller\PasswordReissueController.java   | Java            |         63 |          0 |         10 |         73 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\controller\PasswordResetController.java     | Java            |         67 |          0 |         12 |         79 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\controller\TodoApiController.java           | Java            |        108 |          0 |         11 |        119 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\controller\TodoController.java              | Java            |        483 |        224 |         34 |        741 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\controller\package-info.java                | Java            |          1 |          6 |          2 |          9 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\dto\MonthlyProgressSummary.java             | Java            |         38 |          0 |         12 |         50 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\dto\UserTaskSummary.java                    | Java            |         31 |          0 |         10 |         41 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\entity\AppUser.java                         | Java            |         69 |          0 |         23 |         92 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\entity\AuditLog.java                        | Java            |         92 |          0 |         30 |        122 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\entity\Category.java                        | Java            |         36 |          0 |         11 |         47 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\entity\MailSettings.java                    | Java            |         50 |          0 |         17 |         67 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\entity\Priority.java                        | Java            |         13 |          0 |          5 |         18 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\entity\Status.java                          | Java            |         13 |          0 |          3 |         16 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\entity\Todo.java                            | Java            |        175 |        198 |         58 |        431 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\entity\TodoAttachment.java                  | Java            |         53 |          0 |         17 |         70 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\entity\TodoHistory.java                     | Java            |         60 |          0 |         18 |         78 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\entity\package-info.java                    | Java            |          1 |          6 |          2 |          9 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\exception\BusinessException.java            | Java            |         11 |          0 |          4 |         15 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\exception\ErrorResponse.java                | Java            |         51 |          0 |         16 |         67 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\exception\GlobalExceptionHandler.java       | Java            |         48 |          0 |          7 |         55 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\exception\RestExceptionHandler.java         | Java            |         49 |          0 |          8 |         57 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\exception\TodoNotFoundException.java        | Java            |         11 |          0 |          4 |         15 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\form\TodoForm.java                          | Java            |         92 |        121 |         31 |        244 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\form\package-info.java                      | Java            |          1 |          6 |          2 |          9 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\mapper\TodoAttachmentMapper.java            | Java            |         11 |          0 |          7 |         18 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\mapper\TodoMapper.java                      | Java            |         32 |          0 |          8 |         40 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\repository\AuditLogRepository.java          | Java            |          6 |          0 |          3 |          9 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\repository\CategoryRepository.java          | Java            |          5 |          0 |          3 |          8 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\repository\MailSettingsRepository.java      | Java            |          5 |          0 |          3 |          8 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\repository\TodoHistoryRepository.java       | Java            |          5 |          0 |          3 |          8 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\repository\TodoRepository.java              | Java            |         21 |          0 |         11 |         32 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\repository\UserRepository.java              | Java            |          7 |          0 |          3 |         10 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\service\AsyncTaskService.java               | Java            |         32 |          0 |          5 |         37 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\service\AuditService.java                   | Java            |         35 |          0 |          6 |         41 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\service\CustomUserDetailsService.java       | Java            |         29 |          0 |          7 |         36 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\service\FileStorageService.java             | Java            |         69 |          0 |          8 |         77 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\service\MailService.java                    | Java            |         84 |          0 |          8 |         92 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\service\MailSettingsService.java            | Java            |         65 |          0 |          9 |         74 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\service\PasswordReissueService.java         | Java            |         86 |          0 |         15 |        101 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\service\ReminderNotificationService.java    | Java            |         63 |          0 |         10 |         73 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\service\ReminderScheduler.java              | Java            |         41 |          0 |          6 |         47 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\service\TodoAttachmentService.java          | Java            |         71 |          0 |         10 |         81 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\service\TodoService.java                    | Java            |        185 |        169 |         25 |        379 |
+| c:\academia\src\Task-List\src\main\java\com\example\todo\service\package-info.java                   | Java            |          1 |          7 |          2 |         10 |
+| c:\academia\src\Task-List\src\main\resources\TodoAttachmentMapper.xml                                | XML             |         66 |          0 |          6 |         72 |
+| c:\academia\src\Task-List\src\main\resources\TodoMapper.xml                                          | XML             |        145 |          0 |          6 |        151 |
+| c:\academia\src\Task-List\src\main\resources\application.properties                                  | Java Properties |         33 |          9 |          9 |         51 |
+| c:\academia\src\Task-List\src\main\resources\data.sql                                                | MS SQL          |         35 |          0 |          3 |         38 |
+| c:\academia\src\Task-List\src\main\resources\messages_en.properties                                  | Java Properties |        156 |          0 |         19 |        175 |
+| c:\academia\src\Task-List\src\main\resources\messages_ja.properties                                  | Java Properties |        156 |          0 |         19 |        175 |
+| c:\academia\src\Task-List\src\main\resources\schema.sql                                              | MS SQL          |         68 |          0 |          8 |         76 |
+| c:\academia\src\Task-List\src\main\resources\static\css\login.css                                    | PostCSS         |         58 |          0 |         10 |         68 |
+| c:\academia\src\Task-List\src\main\resources\templates\admin\audit-logs.html                         | HTML            |        108 |          0 |          6 |        114 |
+| c:\academia\src\Task-List\src\main\resources\templates\admin\groups.html                             | HTML            |        117 |          0 |          4 |        121 |
+| c:\academia\src\Task-List\src\main\resources\templates\admin\index.html                              | HTML            |        242 |          0 |          8 |        250 |
+| c:\academia\src\Task-List\src\main\resources\templates\admin\mail-settings.html                      | HTML            |        109 |          0 |          5 |        114 |
+| c:\academia\src\Task-List\src\main\resources\templates\admin\report.html                             | HTML            |         93 |          0 |          4 |         97 |
+| c:\academia\src\Task-List\src\main\resources\templates\admin\todos.html                              | HTML            |        400 |          0 |         23 |        423 |
+| c:\academia\src\Task-List\src\main\resources\templates\admin\users-manage.html                       | HTML            |        313 |          0 |          5 |        318 |
+| c:\academia\src\Task-List\src\main\resources\templates\admin\users.html                              | HTML            |        185 |          0 |          4 |        189 |
+| c:\academia\src\Task-List\src\main\resources\templates\complete.html                                 | HTML            |        196 |          0 |          8 |        204 |
+| c:\academia\src\Task-List\src\main\resources\templates\confirm.html                                  | HTML            |        238 |          0 |          7 |        245 |
+| c:\academia\src\Task-List\src\main\resources\templates\edit.html                                     | HTML            |        260 |          0 |          8 |        268 |
+| c:\academia\src\Task-List\src\main\resources\templates\error\404.html                                | HTML            |         13 |          0 |          1 |         14 |
+| c:\academia\src\Task-List\src\main\resources\templates\error\500.html                                | HTML            |         13 |          0 |          1 |         14 |
+| c:\academia\src\Task-List\src\main\resources\templates\error\business.html                           | HTML            |         14 |          0 |          1 |         15 |
+| c:\academia\src\Task-List\src\main\resources\templates\gantt.html                                    | HTML            |        610 |          0 |         28 |        638 |
+| c:\academia\src\Task-List\src\main\resources\templates\index.html                                    | HTML            |      1,348 |          0 |         55 |      1,403 |
+| c:\academia\src\Task-List\src\main\resources\templates\login.html                                    | HTML            |        113 |          0 |          5 |        118 |
+| c:\academia\src\Task-List\src\main\resources\templates\mail\reminder.html                            | HTML            |         30 |          0 |          1 |         31 |
+| c:\academia\src\Task-List\src\main\resources\templates\password-reissue.html                         | HTML            |        110 |          0 |          1 |        111 |
+| c:\academia\src\Task-List\src\main\resources\templates\password-reset.html                           | HTML            |        106 |          0 |          1 |        107 |
+| Total                                                                                                |                 |      8,890 |        746 |        899 |     10,535 |
++------------------------------------------------------------------------------------------------------+-----------------+------------+------------+------------+------------+
