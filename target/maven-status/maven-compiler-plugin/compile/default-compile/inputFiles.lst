@@ -25,6 +25,8 @@ C:\academia\src\Task-List\src\main\java\com\example\todo\controller\AdminAuditLo
 C:\academia\src\Task-List\src\main\java\com\example\todo\form\TodoForm.java
 C:\academia\src\Task-List\src\main\java\com\example\todo\config\UserDataInitializer.java
 C:\academia\src\Task-List\src\main\java\com\example\todo\entity\Priority.java
+C:\academia\src\Task-List\src\main\java\com\example\todo\entity\package-info.java
+C:\academia\src\Task-List\src\main\java\com\example\todo\controller\package-info.java
 C:\academia\src\Task-List\src\main\java\com\example\todo\service\AsyncTaskService.java
 C:\academia\src\Task-List\src\main\java\com\example\todo\repository\AuditLogRepository.java
 C:\academia\src\Task-List\src\main\java\com\example\todo\entity\Category.java
@@ -39,6 +41,7 @@ C:\academia\src\Task-List\src\main\java\com\example\todo\dto\MonthlyProgressSumm
 C:\academia\src\Task-List\src\main\java\com\example\todo\service\MailService.java
 C:\academia\src\Task-List\src\main\java\com\example\todo\service\ReminderNotificationService.java
 C:\academia\src\Task-List\src\main\java\com\example\todo\service\TodoService.java
+C:\academia\src\Task-List\src\main\java\com\example\todo\service\package-info.java
 C:\academia\src\Task-List\src\main\java\com\example\todo\service\CustomUserDetailsService.java
 C:\academia\src\Task-List\src\main\java\com\example\todo\controller\AdminUserController.java
 C:\academia\src\Task-List\src\main\java\com\example\todo\config\PasswordResetEnforcementFilter.java
@@ -51,6 +54,7 @@ C:\academia\src\Task-List\src\main\java\com\example\todo\mapper\TodoAttachmentMa
 C:\academia\src\Task-List\src\main\java\com\example\todo\exception\ErrorResponse.java
 C:\academia\src\Task-List\src\main\java\com\example\todo\config\AsyncConfig.java
 C:\academia\src\Task-List\src\main\java\com\example\todo\api\ApiResponse.java
+C:\academia\src\Task-List\src\main\java\com\example\todo\form\package-info.java
 C:\academia\src\Task-List\src\main\java\com\example\todo\exception\RestExceptionHandler.java
 C:\academia\src\Task-List\src\main\java\com\example\todo\TodoApplication.java
 C:\academia\src\Task-List\src\main\java\com\example\todo\aop\AopTraceEntry.java
